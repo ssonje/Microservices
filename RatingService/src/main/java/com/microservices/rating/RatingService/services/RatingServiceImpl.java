@@ -1,7 +1,6 @@
 package com.microservices.rating.RatingService.services;
 
 import com.microservices.rating.RatingService.entities.Rating;
-import com.microservices.rating.RatingService.exceptions.ResourceNotFoundException;
 import com.microservices.rating.RatingService.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +24,8 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Rating getRatingFromID(Integer ratingID) {
-        Rating rating = ratingRepository.findById(ratingID).orElseThrow(() ->
-                new ResourceNotFoundException("Rating with ID - " + ratingID + " not found..."));
+    public List<Rating> getRatingsFromUserID(Integer userID) {
+        List<Rating> rating = ratingRepository.findByUserID(userID);
         return rating;
     }
 

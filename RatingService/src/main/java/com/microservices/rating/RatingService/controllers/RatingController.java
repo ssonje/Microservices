@@ -21,9 +21,9 @@ public class RatingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRating);
     }
 
-    @GetMapping("/rating/{hotelID}")
-    public ResponseEntity<?> getRatingFromID(@PathVariable Integer ratingID) {
-        Rating rating = ratingService.getRatingFromID(ratingID);
+    @GetMapping("/ratings/user/{userID}")
+    public ResponseEntity<?> getRatingsFromUserID(@PathVariable Integer userID) {
+        List<Rating> rating = ratingService.getRatingsFromUserID(userID);
         return ResponseEntity.status(HttpStatus.OK).body(rating);
     }
 
@@ -33,7 +33,7 @@ public class RatingController {
         return ResponseEntity.status(HttpStatus.OK).body(ratings);
     }
 
-    @PostMapping("/rating/delete/{hotelID}")
+    @PostMapping("/rating/delete/{ratingID}")
     public ResponseEntity<?> deleteRating(@PathVariable Integer ratingID) {
         Boolean isRatingDeleted = ratingService.deleteRating(ratingID);
         return ResponseEntity.status(HttpStatus.CREATED).body(isRatingDeleted);

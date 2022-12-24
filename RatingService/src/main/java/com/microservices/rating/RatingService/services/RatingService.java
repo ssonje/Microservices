@@ -8,7 +8,7 @@ public interface RatingService {
 
     Rating saveRating(Rating rating);
     List<Rating> getAllRatings();
-    Rating getRatingFromID(Integer ratingID);
+    List<Rating> getRatingsFromUserID(Integer userID);
     Boolean deleteRating(Integer ratingID);
     Rating modifyRating(Rating rating);
 

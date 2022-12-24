@@ -1,12 +1,15 @@
 package com.microservices.user.service.controllers;
 
+import com.microservices.user.service.entities.Rating;
 import com.microservices.user.service.entities.User;
 import com.microservices.user.service.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -14,6 +17,11 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private static String RatingServiceBaseURL = "http://localhost:8083/";
 
     @PostMapping("/user/new")
     public ResponseEntity<?> createUser(@RequestBody User user) {
@@ -24,6 +32,10 @@ public class UserController {
     @GetMapping("/user/{userID}")
     public ResponseEntity<?> getUserByID(@PathVariable String userID) {
         User user = userService.getUserFromID(userID);
+        ArrayList<Rating> ratingsForUserID = restTemplate.getForObject(
+                UserController.RatingServiceBaseURL + "ratings/user/" + user.getId(),
+                ArrayList.class);
+        user.setRatings(ratingsForUserID);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
