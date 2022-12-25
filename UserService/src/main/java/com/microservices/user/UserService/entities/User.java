@@ -1,4 +1,4 @@
-package com.microservices.user.service.entities;
+package com.microservices.user.UserService.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;

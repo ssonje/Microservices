@@ -1,4 +1,4 @@
-package com.microservices.user.service.payloads;
+package com.microservices.user.UserService.payloads;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
