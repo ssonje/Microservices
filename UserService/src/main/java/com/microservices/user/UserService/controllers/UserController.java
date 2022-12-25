@@ -3,6 +3,7 @@ package com.microservices.user.UserService.controllers;
 import com.microservices.user.UserService.entities.Hotel;
 import com.microservices.user.UserService.entities.Rating;
 import com.microservices.user.UserService.entities.User;
+import com.microservices.user.UserService.external.services.HotelService;
 import com.microservices.user.UserService.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,10 @@ public class UserController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private HotelService hotelService;
+
     private static String RatingServiceBaseURL = "http://RATING-SERVICE/";
-    private static String HotelServiceBaseURL = "http://HOTEL-SERVICE/";
 
     @PostMapping("/user/new")
     public ResponseEntity<?> createUser(@RequestBody User user) {
@@ -43,10 +46,7 @@ public class UserController {
         List<Rating> ratings = Arrays.stream(ratingsForUserID).toList();
         List<Rating> ratingList = ratings.stream().map(rating -> {
             // Call the Hotel service to set the data for rating
-            ResponseEntity<Hotel> hotelResponse = restTemplate.getForEntity(
-                    UserController.HotelServiceBaseURL + "hotel/" + rating.getHotelID(),
-                    Hotel.class);
-            Hotel hotel = hotelResponse.getBody();
+            Hotel hotel = hotelService.getHotel(rating.getHotelID());
             rating.setHotel(hotel);
             return rating;
         }).collect(Collectors.toList());
