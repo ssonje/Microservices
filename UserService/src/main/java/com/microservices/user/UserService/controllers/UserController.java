@@ -1,8 +1,8 @@
-package com.microservices.user.service.controllers;
+package com.microservices.user.UserService.controllers;
 
-import com.microservices.user.service.entities.Rating;
-import com.microservices.user.service.entities.User;
-import com.microservices.user.service.services.UserService;
+import com.microservices.user.UserService.entities.Rating;
+import com.microservices.user.UserService.entities.User;
+import com.microservices.user.UserService.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,8 @@
-package com.microservices.user.service.services;
+package com.microservices.user.UserService.services;
 
-import com.microservices.user.service.entities.User;
-import com.microservices.user.service.exceptions.ResourceNotFoundException;
-import com.microservices.user.service.repositories.UserRepository;
+import com.microservices.user.UserService.entities.User;
+import com.microservices.user.UserService.exceptions.ResourceNotFoundException;
+import com.microservices.user.UserService.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

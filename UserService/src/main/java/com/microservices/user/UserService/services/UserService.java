@@ -1,6 +1,6 @@
-package com.microservices.user.service.services;
+package com.microservices.user.UserService.services;
 
-import com.microservices.user.service.entities.User;
+import com.microservices.user.UserService.entities.User;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@
 		<version>3.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.microservices.user.service</groupId>
+	<groupId>com.microservices.user</groupId>
 	<artifactId>UserService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>UserService</name>

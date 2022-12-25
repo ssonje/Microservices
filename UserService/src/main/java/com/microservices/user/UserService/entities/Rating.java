@@ -1,4 +1,4 @@
-package com.microservices.user.service.entities;
+package com.microservices.user.UserService.entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,5 +22,7 @@ public class Rating {
     private Integer hotelID;
     private Integer rating;
     private String feedback;
+
+    private Hotel hotel;
 
 }
