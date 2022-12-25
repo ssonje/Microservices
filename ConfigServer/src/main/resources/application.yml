@@ -1,0 +1,15 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: CONFIG-SERVER
+
+  cloud:
+    config:
+      server:
+        git:
+          username: ssonje
+          password: SanketStudyFootball
+          uri: https://github.com/ssonje/Microservices-Configuration
+          clone-on-startup: true
