@@ -23,8 +23,8 @@ public class UserController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static String RatingServiceBaseURL = "http://localhost:8083/";
-    private static String HotelServiceBaseURL = "http://localhost:8082/";
+    private static String RatingServiceBaseURL = "http://RATING-SERVICE/";
+    private static String HotelServiceBaseURL = "http://HOTEL-SERVICE/";
 
     @PostMapping("/user/new")
     public ResponseEntity<?> createUser(@RequestBody User user) {
