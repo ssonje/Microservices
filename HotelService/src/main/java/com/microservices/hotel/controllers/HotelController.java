@@ -1,6 +1,7 @@
 package com.microservices.hotel.controllers;
 
 import com.microservices.hotel.entities.Hotel;
+import com.microservices.hotel.payloads.APIResponse;
 import com.microservices.hotel.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,8 @@ public class HotelController {
 
     @PostMapping("/hotel/new")
     public ResponseEntity<?> createHotel(@RequestBody Hotel hotel) {
-        Hotel savedHotel = hotelService.saveHotel(hotel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedHotel);
+        APIResponse apiResponse = hotelService.saveHotel(hotel);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/hotel/{hotelID}")
@@ -36,14 +37,14 @@ public class HotelController {
 
     @DeleteMapping("/hotel/delete/{hotelID}")
     public ResponseEntity<?> deleteHotel(@PathVariable Integer hotelID) {
-        Boolean isUserDeleted = hotelService.deleteHotel(hotelID);
-        return ResponseEntity.status(HttpStatus.CREATED).body(isUserDeleted);
+        APIResponse apiResponse = hotelService.deleteHotel(hotelID);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PutMapping("/hotel/modify")
     public ResponseEntity<?> modifyHotel(@RequestBody Hotel hotel) {
-        Hotel modifiedHotel = hotelService.modifyHotel(hotel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(modifiedHotel);
+        APIResponse apiResponse = hotelService.modifyHotel(hotel);
+        return ResponseEntity.ok(apiResponse);
     }
 
 }
