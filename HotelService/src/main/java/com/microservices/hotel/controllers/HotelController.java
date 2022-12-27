@@ -34,13 +34,13 @@ public class HotelController {
         return ResponseEntity.status(HttpStatus.OK).body(hotels);
     }
 
-    @PostMapping("/hotel/delete/{hotelID}")
+    @DeleteMapping("/hotel/delete/{hotelID}")
     public ResponseEntity<?> deleteHotel(@PathVariable Integer hotelID) {
         Boolean isUserDeleted = hotelService.deleteHotel(hotelID);
         return ResponseEntity.status(HttpStatus.CREATED).body(isUserDeleted);
     }
 
-    @PostMapping("/hotel/modify")
+    @PutMapping("/hotel/modify")
     public ResponseEntity<?> modifyHotel(@RequestBody Hotel hotel) {
         Hotel modifiedHotel = hotelService.modifyHotel(hotel);
         return ResponseEntity.status(HttpStatus.CREATED).body(modifiedHotel);

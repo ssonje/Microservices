@@ -11,5 +11,6 @@ public interface HotelService {
     Hotel getHotelFromID(Integer hotelID);
     Boolean deleteHotel(Integer hotelID);
     Hotel modifyHotel(Hotel hotel);
+    Boolean deleteAllHotels();
 
 }
