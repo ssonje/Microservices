@@ -1,9 +1,12 @@
 package com.microservices.hotel.services;
 
+import com.microservices.hotel.constants.HotelControllerAPIResponseConstants;
 import com.microservices.hotel.entities.Hotel;
 import com.microservices.hotel.exceptions.ResourceNotFoundException;
+import com.microservices.hotel.payloads.APIResponse;
 import com.microservices.hotel.repositories.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +19,16 @@ public class HotelServiceImpl implements HotelService {
     private HotelRepository hotelRepository;
 
     @Override
-    public Hotel saveHotel(Hotel hotel) {
-        return hotelRepository.save(hotel);
+    public APIResponse saveHotel(Hotel hotel) {
+        try {
+            hotelRepository.save(hotel);
+            return HotelServiceImpl.getAPIResponse(
+                    HotelControllerAPIResponseConstants.ADD_HOTEL_SUCCESS,
+                    HttpStatus.CREATED,
+                    true);
+        } catch (Exception e) {
+            return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
     }
 
     @Override
@@ -33,25 +44,54 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Boolean deleteHotel(Integer hotelID) {
-        hotelRepository.deleteById(hotelID);
-        return true;
+    public APIResponse deleteHotel(Integer hotelID) {
+        try {
+            hotelRepository.deleteById(hotelID);
+            return HotelServiceImpl.getAPIResponse(
+                    HotelControllerAPIResponseConstants.DELETE_HOTEL_SUCCESS,
+                    HttpStatus.OK,
+                    true);
+        } catch (Exception e) {
+            return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
     }
 
     @Override
-    public Hotel modifyHotel(Hotel hotel) {
-        Optional<Hotel> hotelOptional = hotelRepository.findById(hotel.getId());
-        Hotel hotelFromID = hotelOptional.get();
-        hotelFromID.setName(hotel.getName());
-        hotelFromID.setAbout(hotel.getAbout());
-        hotelFromID.setLocation(hotel.getLocation());
-        return hotelRepository.save(hotelFromID);
+    public APIResponse modifyHotel(Hotel hotel) {
+        try {
+            Optional<Hotel> hotelOptional = hotelRepository.findById(hotel.getId());
+            Hotel hotelFromID = hotelOptional.get();
+            hotelFromID.setName(hotel.getName());
+            hotelFromID.setAbout(hotel.getAbout());
+            hotelFromID.setLocation(hotel.getLocation());
+            hotelRepository.save(hotelFromID);
+            return HotelServiceImpl.getAPIResponse(
+                    HotelControllerAPIResponseConstants.MODIFIED_HOTEL_SUCCESS,
+                    HttpStatus.OK,
+                    true);
+        } catch (Exception e) {
+            return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
     }
 
     @Override
-    public Boolean deleteAllHotels() {
-        hotelRepository.deleteAll();;
-        return true;
+    public APIResponse deleteAllHotels() {
+        try {
+            hotelRepository.deleteAll();
+            return HotelServiceImpl.getAPIResponse(
+                    HotelControllerAPIResponseConstants.DELETE_ALL_HOTELS_SUCCESS,
+                    HttpStatus.OK,
+                    true);
+        } catch (Exception e) {
+            return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
     }
 
+    private static APIResponse getAPIResponse(String message, HttpStatus httpStatus, Boolean responseStatus) {
+        return APIResponse.builder()
+                .message(message)
+                .httpStatus(httpStatus)
+                .responseStatus(responseStatus)
+                .build();
+    }
 }

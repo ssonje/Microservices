@@ -1,6 +1,8 @@
 package com.microservices.hotel.controllers;
 
+import com.microservices.hotel.constants.HotelControllerTestAPIResponseConstants;
 import com.microservices.hotel.entities.Hotel;
+import com.microservices.hotel.payloads.APIResponse;
 import com.microservices.hotel.services.HotelService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -97,17 +100,11 @@ public class HotelControllerUnitTest extends AbstractTest {
                 .content(inputJson))
                 .andReturn();
 
-        int status = mvcResult.getResponse().getStatus();
-        Assertions.assertEquals(201, status);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponse apiResponse = super.mapFromJson(response, APIResponse.class);
 
-        String hotelFromURLResponse = mvcResult.getResponse().getContentAsString();
-        Hotel hotelResponse = super.mapFromJson(hotelFromURLResponse, Hotel.class);
-        verifyHotelDetails(
-                hotelResponse,
-                HotelControllerUnitTest.TestHotelAbout,
-                HotelControllerUnitTest.TestHotelLocation,
-                HotelControllerUnitTest.TestHotelName
-        );
+        // Verify API response details
+        verifyAPIResponse(apiResponse, true, HttpStatus.CREATED, HotelControllerTestAPIResponseConstants.ADD_HOTEL_SUCCESS);
     }
 
     @Test
@@ -127,17 +124,11 @@ public class HotelControllerUnitTest extends AbstractTest {
                 .content(inputJson))
                 .andReturn();
 
-        int status = mvcResult.getResponse().getStatus();
-        Assertions.assertEquals(201, status);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponse apiResponse = super.mapFromJson(response, APIResponse.class);
 
-        String hotelFromURLResponse = mvcResult.getResponse().getContentAsString();
-        Hotel hotelResponse = super.mapFromJson(hotelFromURLResponse, Hotel.class);
-        verifyHotelDetails(
-                hotelResponse,
-                modifiedHotel.getAbout(),
-                modifiedHotel.getLocation(),
-                modifiedHotel.getName()
-        );
+        // Verify API response details
+        verifyAPIResponse(apiResponse, true, HttpStatus.OK, HotelControllerTestAPIResponseConstants.MODIFIED_HOTEL_SUCCESS);
     }
 
     @Test
@@ -154,14 +145,11 @@ public class HotelControllerUnitTest extends AbstractTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                         .andReturn();
 
-        int status = mvcResult.getResponse().getStatus();
-        Assertions.assertEquals(201, status);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponse apiResponse = super.mapFromJson(response, APIResponse.class);
 
-        Assertions.assertEquals(
-                0,
-                hotelService.getAllHotels().toArray().length,
-                "No Hotel object should be present in the DB"
-        );
+        // Verify API response details
+        verifyAPIResponse(apiResponse, true, HttpStatus.OK, HotelControllerTestAPIResponseConstants.DELETE_HOTEL_SUCCESS);
     }
 
     private static Hotel getHotelObject() {
@@ -179,7 +167,7 @@ public class HotelControllerUnitTest extends AbstractTest {
                                            String hotelName) {
         Assert.notNull(
                 hotelFromURLResponse,
-                "Hotel get from the service should be present."
+                "Hotel get from the response should be present."
         );
 
         Assertions.assertEquals(
@@ -201,4 +189,12 @@ public class HotelControllerUnitTest extends AbstractTest {
         );
     }
 
+    private static void verifyAPIResponse(APIResponse apiResponse,
+                                          Boolean expectedResponseStatus,
+                                          HttpStatus expectedHttpStatus,
+                                          String expectedMessage) {
+        Assertions.assertEquals(expectedResponseStatus, apiResponse.getResponseStatus());
+        Assertions.assertEquals(expectedHttpStatus, apiResponse.getHttpStatus());
+        Assertions.assertEquals(expectedMessage, apiResponse.getMessage());
+    }
 }
