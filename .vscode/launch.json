@@ -1,0 +1,49 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch UserServiceApplication",
+            "request": "launch",
+            "mainClass": "com.microservices.user.UserService.UserServiceApplication",
+            "projectName": "UserService"
+        },
+        {
+            "type": "java",
+            "name": "Launch RatingServiceApplication",
+            "request": "launch",
+            "mainClass": "com.microservices.rating.RatingService.RatingServiceApplication",
+            "projectName": "RatingService"
+        },
+        {
+            "type": "java",
+            "name": "Launch ApiGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.microservices.gateway.APIGateway.ApiGatewayApplication",
+            "projectName": "APIGateway"
+        },
+        {
+            "type": "java",
+            "name": "Launch HotelServiceApplication",
+            "request": "launch",
+            "mainClass": "com.microservices.hotel.HotelServiceApplication",
+            "projectName": "HotelService"
+        },
+        {
+            "type": "java",
+            "name": "Launch ServiceRegistryApplication",
+            "request": "launch",
+            "mainClass": "com.microservices.service.registry.ServiceRegistryApplication",
+            "projectName": "ServiceRegistry"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ConfigServerApplication<ConfigServer>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.microservices.config.server.ConfigServer.ConfigServerApplication",
+            "projectName": "ConfigServer",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
