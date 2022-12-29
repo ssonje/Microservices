@@ -32,27 +32,31 @@ public class HotelServiceUnitTests {
     private static String TestHotelAbout = "Test Hotel About";
     private static String TestHotelLocation = "Test Hotel Location";
 
+    // MARK: - Lifecycle methods
+
     @BeforeEach
     void setUp() {
         Hotel hotel = getHotelObject();
-        hotelService.saveHotelWithID(hotel);
+        hotelRepository.save(hotel);
     }
 
     @AfterEach
     void tearDown() {
-        hotelService.deleteAllHotels();
+        hotelRepository.deleteAll();
     }
+
+    // MARK: - Tests
 
     @Test
     public void testGetHotelByID() {
-        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
-        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName);
+        Hotel hotelFromService = hotelService.getHotelFromID(TestHotelID);
+        verifyHotelDetails(hotelFromService, TestHotelAbout, TestHotelLocation, TestHotelName);
     }
 
     @Test
     public void testSaveHotel() {
-        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
-        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName);
+        Hotel hotelFromService = hotelService.getHotelFromID(TestHotelID);
+        verifyHotelDetails(hotelFromService, TestHotelAbout, TestHotelLocation, TestHotelName);
     }
 
     @Test
@@ -69,7 +73,7 @@ public class HotelServiceUnitTests {
         hotels.add(hotel);
         hotels.add(hotel);
 
-        verifyGetHotelsLength(hotels, hotelRepository.findAll());
+        verifyGetHotelsLength(hotels, hotelService.getAllHotels());
     }
 
     @Test
@@ -87,29 +91,32 @@ public class HotelServiceUnitTests {
         hotels.add(hotel);
 
         // Before deleting information of one hotel
-        verifyGetHotelsLength(hotels, hotelRepository.findAll());
+        verifyGetHotelsLength(hotels, hotelService.getAllHotels());
 
         // Remove hotel from the hotels list and from the DB
         hotels.remove(0);
         hotelService.deleteHotel(TestHotelID);
 
         // After deleting information of one hotel
-        verifyGetHotelsLength(hotels, hotelRepository.findAll());
+        verifyGetHotelsLength(hotels, hotelService.getAllHotels());
     }
 
     @Test
     public void testmodifyHotel() {
-        Hotel hotel = HotelServiceUnitTests.getHotelObject();
-        hotelService.saveHotel(hotel);
+        Hotel hotel = getHotelObject();
+        hotelRepository.save(hotel);
 
-        Hotel modifiedHotel = hotelRepository.findAll().get(0);
-        modifiedHotel.setName(HotelServiceUnitTests.TestHotelName + " Modified");
+        Hotel modifiedHotel = getHotelFromOptionalHotelObject(hotelRepository);
+        modifiedHotel.setName(TestHotelName + " Modified");
+
         hotelService.modifyHotel(modifiedHotel);
 
         // Verify the hotel details
-        Hotel hotelFromRepository = hotelRepository.findAll().get(0);
-        HotelServiceUnitTests.verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName + " Modified");
+        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
+        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName + " Modified");
     }
+
+    // MARK: - Private Helpers
 
     private static Hotel getHotelObject() {
         Hotel hotel = Hotel.builder()
@@ -126,38 +133,38 @@ public class HotelServiceUnitTests {
         return hotelOptional.get();
     }
 
-    private static void verifyHotelDetails(Hotel hotelFromRepository, String hotelAbout, String hotelLocation, String hotelName) {
+    private static void verifyHotelDetails(Hotel hotel, String hotelAbout, String hotelLocation, String hotelName) {
         Assert.notNull(
-            hotelFromRepository,
+            hotel,
             "Hotel get from the service should be present."
         );
 
         Assertions.assertEquals(
             hotelAbout,
-            hotelFromRepository.getAbout(),
+            hotel.getAbout(),
             "Hotel About should be equal to the " + TestHotelAbout
         );
 
         Assertions.assertEquals(
             hotelLocation,
-            hotelFromRepository.getLocation(),
+            hotel.getLocation(),
             "Hotel Location should be equal to the " + TestHotelLocation
         );
 
         Assertions.assertEquals(
             hotelName,
-            hotelFromRepository.getName(),
+            hotel.getName(),
             "Hotel Name should be equal to the " + TestHotelName
         );
     }
 
-    private static void verifyGetHotelsLength(List<Hotel> hotels, List<Hotel> hotelsGetFromRepository) {
+    private static void verifyGetHotelsLength(List<Hotel> hotels, List<Hotel> hotelsGetFromService) {
         Integer hotelsLength = hotels.toArray().length;
-        Integer hotelsGetFromRepositoryLegnth = hotelsGetFromRepository.toArray().length;
+        Integer hotelsGetFromServiceLegnth = hotelsGetFromService.toArray().length;
         Assertions.assertEquals(
             hotelsLength,
-            hotelsGetFromRepositoryLegnth,
-            "hotelListLength " + hotelsLength + " should match with the hotelRepositoryLength length = " + hotelsGetFromRepositoryLegnth
+            hotelsGetFromServiceLegnth,
+            "hotelListLength " + hotelsLength + " should match with the hotelRepositoryLength length = " + hotelsGetFromServiceLegnth
         );
     }
 

@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -20,17 +23,16 @@ public class HotelRepositoryUnitTests {
     @Autowired
     private HotelRepository hotelRepository;
 
+    private static String TestHotelID = UUID.randomUUID().toString();
     private static String TestHotelName = "Test Hotel Name";
     private static String TestHotelAbout = "Test Hotel About";
     private static String TestHotelLocation = "Test Hotel Location";
 
+    // MARK: - Lifecycle methods
+
     @BeforeEach
     void setUp() {
-        Hotel hotel = new Hotel().builder()
-                .name(HotelRepositoryUnitTests.TestHotelName)
-                .about(HotelRepositoryUnitTests.TestHotelAbout)
-                .location(HotelRepositoryUnitTests.TestHotelLocation)
-                .build();
+        Hotel hotel = getHotelObject();
         hotelRepository.save(hotel);
     }
 
@@ -39,96 +41,113 @@ public class HotelRepositoryUnitTests {
         hotelRepository.deleteAll();
     }
 
+    // MARK: - Tests
+
     @Test
     void testGetHotelByID() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
-
-        Hotel hotel = hotelList.get(0);
-        Assert.notNull(
-                hotel,
-                "Hotel which is setup in the setUp method should be present."
-        );
-
-        Assertions.assertEquals(
-                HotelRepositoryUnitTests.TestHotelAbout,
-                hotel.getAbout(),
-                "Hotel About should be equal to the " + HotelRepositoryUnitTests.TestHotelAbout
-        );
-
-        Assertions.assertEquals(
-                HotelRepositoryUnitTests.TestHotelLocation,
-                hotel.getLocation(),
-                "Hotel Location should be equal to the " + HotelRepositoryUnitTests.TestHotelLocation
-        );
-
-        Assertions.assertEquals(
-                HotelRepositoryUnitTests.TestHotelName,
-                hotel.getName(),
-                "Hotel Name should be equal to the " + HotelRepositoryUnitTests.TestHotelName
-        );
+        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
+        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName);
     }
 
     @Test
     void testGetAllHotels() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
+        Hotel hotel = getHotelObject();
+
+        // Add three hotels to the hotels list
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(hotel);
+
+        verifyGetHotelsLength(hotels, hotelRepository.findAll());
     }
 
     @Test
     void testSaveHotel() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
+        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
+        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName);
     }
 
     @Test
     void testDeleteHotel() {
-        hotelRepository.deleteAll();
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                0,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to Zero."
-        );
+        Hotel hotel = getHotelObject();
+    
+        // Add three hotels to the hotels list
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(hotel);
+
+        // Before deleting information of one hotel
+        verifyGetHotelsLength(hotels, hotelRepository.findAll());
+
+        // Remove hotel from the hotels list and from the DB
+        hotels.remove(0);
+        hotelRepository.deleteById(TestHotelID);
+
+        // After deleting information of one hotel
+        verifyGetHotelsLength(hotels, hotelRepository.findAll());
     }
 
     @Test
     void testModifyHotel() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Hotel hotel = hotelList.get(0);
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
-
-        hotel.setName("Modified Test Name");
+        Hotel hotel = getHotelObject();
         hotelRepository.save(hotel);
 
-        List<Hotel> hotelListModified = hotelRepository.findAll();
-        Hotel hotelModified = hotelListModified.get(0);
-        Assertions.assertEquals(
-                1,
-                hotelListModified.toArray().length,
-                "Length of Hotels array should be equal to One."
+        Hotel modifiedHotel = getHotelFromOptionalHotelObject(hotelRepository);
+        modifiedHotel.setName(TestHotelName + " Modified");
+        hotelRepository.save(modifiedHotel);
+
+        // Verify the hotel details
+        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
+        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName + " Modified");
+    }
+
+    // MARK: - Private Helpers
+
+    private static Hotel getHotelObject() {
+        Hotel hotel = Hotel.builder()
+            .id(TestHotelID)
+            .name(TestHotelName)
+            .about(TestHotelAbout)
+            .location(TestHotelLocation)
+            .build();
+        return hotel;
+    }
+
+    private static Hotel getHotelFromOptionalHotelObject(HotelRepository hotelRepository) {
+        Optional<Hotel> hotelOptional = hotelRepository.findById(TestHotelID);
+        return hotelOptional.get();
+    }
+
+    private static void verifyHotelDetails(Hotel hotelFromRepository, String hotelAbout, String hotelLocation, String hotelName) {
+        Assert.notNull(
+            hotelFromRepository,
+            "Hotel get from the service should be present."
         );
 
         Assertions.assertEquals(
-                "Modified Test Name",
-                hotelModified.getName(),
-                "Modify Hotel operation is not working as expected."
+            hotelAbout,
+            hotelFromRepository.getAbout(),
+            "Hotel About should be equal to the " + TestHotelAbout
+        );
+
+        Assertions.assertEquals(
+            hotelLocation,
+            hotelFromRepository.getLocation(),
+            "Hotel Location should be equal to the " + TestHotelLocation
+        );
+
+        Assertions.assertEquals(
+            hotelName,
+            hotelFromRepository.getName(),
+            "Hotel Name should be equal to the " + TestHotelName
+        );
+    }
+
+    private static void verifyGetHotelsLength(List<Hotel> hotels, List<Hotel> hotelsGetFromRepository) {
+        Integer hotelsLength = hotels.toArray().length;
+        Integer hotelsGetFromRepositoryLegnth = hotelsGetFromRepository.toArray().length;
+        Assertions.assertEquals(
+            hotelsLength,
+            hotelsGetFromRepositoryLegnth,
+            "hotelListLength " + hotelsLength + " should match with the hotelRepositoryLength length = " + hotelsGetFromRepositoryLegnth
         );
     }
 
