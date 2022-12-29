@@ -136,25 +136,25 @@ public class HotelServiceUnitTests {
     private static void verifyHotelDetails(Hotel hotel, String hotelAbout, String hotelLocation, String hotelName) {
         Assert.notNull(
             hotel,
-            "Hotel get from the service should be present."
+            "Hotel get from the service should not be nil."
         );
 
         Assertions.assertEquals(
             hotelAbout,
             hotel.getAbout(),
-            "Hotel About should be equal to the " + TestHotelAbout
+            "Hotel About from URL response " + hotel.getAbout() + " should be equal to the " + hotelAbout
         );
 
         Assertions.assertEquals(
             hotelLocation,
             hotel.getLocation(),
-            "Hotel Location should be equal to the " + TestHotelLocation
+            "Hotel Location from URL response " + hotel.getLocation() + " should be equal to the " + hotelAbout
         );
 
         Assertions.assertEquals(
             hotelName,
             hotel.getName(),
-            "Hotel Name should be equal to the " + TestHotelName
+            "Hotel Name from URL response " + hotel.getName() + " should be equal to the " + hotelName
         );
     }
 

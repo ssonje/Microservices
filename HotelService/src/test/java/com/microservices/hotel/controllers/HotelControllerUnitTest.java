@@ -4,6 +4,9 @@ import com.microservices.hotel.constants.HotelControllerTestAPIResponseConstants
 import com.microservices.hotel.entities.Hotel;
 import com.microservices.hotel.payloads.APIResponse;
 import com.microservices.hotel.services.HotelService;
+
+import java.util.UUID;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +25,7 @@ import org.springframework.util.Assert;
 @ExtendWith(MockitoExtension.class)
 public class HotelControllerUnitTest extends AbstractTest {
 
+    private static String TestHotelID = UUID.randomUUID().toString();
     private static String TestHotelName = "Test Hotel Name";
     private static String TestHotelAbout = "Test Hotel About";
     private static String TestHotelLocation = "Test Hotel Location";
@@ -33,6 +37,8 @@ public class HotelControllerUnitTest extends AbstractTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
+        Hotel hotel = getHotelObject();
+        hotelService.saveHotelWithID(hotel);
     }
 
     @AfterEach
@@ -42,42 +48,27 @@ public class HotelControllerUnitTest extends AbstractTest {
 
     @Test
     public void testGetHotelWithID() throws Exception {
-        String uri = "/hotel-service/hotel/{hotelID}";
+        String getHotelWithIDURLString = "/hotel-service/hotel/{hotelID}";
 
-        Hotel hotel = HotelControllerUnitTest.getHotelObject();
-        hotelService.saveHotel(hotel);
-
-        String hotelID = hotelService.getAllHotels().get(0).getId();
-
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
-                .get(uri, hotelID)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
+        MvcResult mvcResult = mvc
+            .perform(MockMvcRequestBuilders.get(getHotelWithIDURLString, TestHotelID).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
         String hotelFromURLResponse = mvcResult.getResponse().getContentAsString();
         Hotel hotelResponse = super.mapFromJson(hotelFromURLResponse, Hotel.class);
-        verifyHotelDetails(
-                hotelResponse,
-                HotelControllerUnitTest.TestHotelAbout,
-                HotelControllerUnitTest.TestHotelLocation,
-                HotelControllerUnitTest.TestHotelName
-        );
+        verifyHotelDetails(hotelResponse, TestHotelAbout, TestHotelLocation, TestHotelName);
     }
 
     @Test
     public void testGetAllHotels() throws Exception {
-        String uri = "/hotel-service/hotels";
+        String getHotelsURLString = "/hotel-service/hotels";
 
-        Hotel hotel = HotelControllerUnitTest.getHotelObject();
-        hotelService.saveHotel(hotel);
-
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
-                .get(uri)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
+        MvcResult mvcResult = mvc
+            .perform(MockMvcRequestBuilders.get(getHotelsURLString).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
@@ -88,17 +79,15 @@ public class HotelControllerUnitTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateHotel() throws Exception {
-        String uri = "/hotel-service/hotel/new";
+    public void testSaveHotel() throws Exception {
+        String saveHotelURLString = "/hotel-service/hotel/new";
 
-        Hotel hotel = HotelControllerUnitTest.getHotelObject();
-
+        Hotel hotel = getHotelObject();
         String inputJson = super.mapToJson(hotel);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
-                .post(uri)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(inputJson))
-                .andReturn();
+
+        MvcResult mvcResult = mvc
+            .perform(MockMvcRequestBuilders.post(saveHotelURLString).contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+            .andReturn();
 
         String response = mvcResult.getResponse().getContentAsString();
         APIResponse apiResponse = super.mapFromJson(response, APIResponse.class);
@@ -109,20 +98,15 @@ public class HotelControllerUnitTest extends AbstractTest {
 
     @Test
     public void testModifyHotel() throws Exception {
-        String uri = "/hotel-service/hotel/modify";
+        String modifyHotelURLString = "/hotel-service/hotel/modify";
 
-        Hotel hotel = HotelControllerUnitTest.getHotelObject();
-        hotelService.saveHotel(hotel);
-
-        Hotel modifiedHotel = hotelService.getAllHotels().get(0);
-        modifiedHotel.setName(HotelControllerUnitTest.TestHotelName + " Modified");
+        Hotel modifiedHotel = hotelService.getHotelFromID(TestHotelID);
+        modifiedHotel.setName(TestHotelName + " Modified");
 
         String inputJson = super.mapToJson(modifiedHotel);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
-                .put(uri)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(inputJson))
-                .andReturn();
+        MvcResult mvcResult = mvc
+            .perform(MockMvcRequestBuilders.put(modifyHotelURLString).contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+            .andReturn();
 
         String response = mvcResult.getResponse().getContentAsString();
         APIResponse apiResponse = super.mapFromJson(response, APIResponse.class);
@@ -133,17 +117,11 @@ public class HotelControllerUnitTest extends AbstractTest {
 
     @Test
     public void testDeleteHotel() throws Exception {
-        String uri = "/hotel-service/hotel/delete/{hotelID}";
+        String deleteHotelURLString = "/hotel-service/hotel/delete/{hotelID}";
 
-        Hotel hotel = HotelControllerUnitTest.getHotelObject();
-        hotelService.saveHotel(hotel);
-
-        Hotel hotelFromService = hotelService.getAllHotels().get(0);
-
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
-                        .delete(uri, hotelFromService.getId())
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                        .andReturn();
+        MvcResult mvcResult = mvc
+            .perform(MockMvcRequestBuilders.delete(deleteHotelURLString, TestHotelID).contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
 
         String response = mvcResult.getResponse().getContentAsString();
         APIResponse apiResponse = super.mapFromJson(response, APIResponse.class);
@@ -153,46 +131,44 @@ public class HotelControllerUnitTest extends AbstractTest {
     }
 
     private static Hotel getHotelObject() {
-        Hotel hotel = new Hotel().builder()
-                .name(HotelControllerUnitTest.TestHotelName)
-                .about(HotelControllerUnitTest.TestHotelAbout)
-                .location(HotelControllerUnitTest.TestHotelLocation)
-                .build();
+        Hotel hotel = Hotel.builder()
+            .id(TestHotelID)
+            .name(TestHotelName)
+            .about(TestHotelAbout)
+            .location(TestHotelLocation)
+            .build();
         return hotel;
     }
 
-    private static void verifyHotelDetails(Hotel hotelFromURLResponse,
-                                           String hotelAbout,
-                                           String hotelLocation,
-                                           String hotelName) {
+    private static void verifyHotelDetails(Hotel hotelFromURLResponse, String hotelAbout, String hotelLocation, String hotelName) {
         Assert.notNull(
-                hotelFromURLResponse,
-                "Hotel get from the response should be present."
+            hotelFromURLResponse,
+            "Hotel get from the response should not be nil."
         );
 
         Assertions.assertEquals(
-                hotelAbout,
-                hotelFromURLResponse.getAbout(),
-                "Hotel About should be equal to the " + HotelControllerUnitTest.TestHotelAbout
+            hotelAbout,
+            hotelFromURLResponse.getAbout(),
+            "Hotel About from URL response " + hotelFromURLResponse.getAbout() + " should be equal to the " + hotelAbout
         );
 
         Assertions.assertEquals(
-                hotelLocation,
-                hotelFromURLResponse.getLocation(),
-                "Hotel Location should be equal to the " + HotelControllerUnitTest.TestHotelLocation
+            hotelLocation,
+            hotelFromURLResponse.getLocation(),
+            "Hotel Location from URL response " + hotelFromURLResponse.getLocation() + " should be equal to the " + hotelAbout
         );
 
         Assertions.assertEquals(
-                hotelName,
-                hotelFromURLResponse.getName(),
-                "Hotel Name should be equal to the " + HotelControllerUnitTest.TestHotelName
+            hotelName,
+            hotelFromURLResponse.getName(),
+            "Hotel Name from URL response " + hotelFromURLResponse.getName() + " should be equal to the " + hotelName
         );
     }
 
     private static void verifyAPIResponse(APIResponse apiResponse,
-                                          Boolean expectedResponseStatus,
-                                          HttpStatus expectedHttpStatus,
-                                          String expectedMessage) {
+        Boolean expectedResponseStatus,
+        HttpStatus expectedHttpStatus,
+        String expectedMessage) {
         Assertions.assertEquals(expectedResponseStatus, apiResponse.getResponseStatus());
         Assertions.assertEquals(expectedHttpStatus, apiResponse.getHttpStatus());
         Assertions.assertEquals(expectedMessage, apiResponse.getMessage());
