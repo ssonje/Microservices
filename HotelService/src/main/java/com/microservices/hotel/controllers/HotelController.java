@@ -18,8 +18,14 @@ public class HotelController {
     private HotelService hotelService;
 
     @PostMapping("/hotel/new")
-    public ResponseEntity<?> createHotel(@RequestBody Hotel hotel) {
-        APIResponse apiResponse = hotelService.saveHotel(hotel);
+    public ResponseEntity<?> saveHotel(@RequestBody Hotel hotel) {
+        APIResponse apiResponse;
+        if (hotel.getId() != null) {
+            apiResponse = hotelService.saveHotelWithID(hotel);
+        } else {
+            apiResponse = hotelService.saveHotel(hotel);
+        }
+
         return ResponseEntity.ok(apiResponse);
     }
 

@@ -13,5 +13,6 @@ public interface HotelService {
     APIResponse deleteHotel(String hotelID);
     APIResponse  modifyHotel(Hotel hotel);
     APIResponse  deleteAllHotels();
+    APIResponse saveHotelWithID(Hotel hotel);
 
 }
