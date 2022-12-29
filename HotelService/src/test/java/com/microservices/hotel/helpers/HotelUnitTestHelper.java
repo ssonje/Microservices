@@ -19,7 +19,7 @@ public final class HotelUnitTestHelper {
     public static String TestHotelAbout = "Test Hotel About";
     public static String TestHotelLocation = "Test Hotel Location";
 
-    public static Hotel getHotelObject() {
+    public static Hotel createHotelObject() {
         Hotel hotel = Hotel.builder()
             .id(TestHotelID)
             .name(TestHotelName)
@@ -34,28 +34,28 @@ public final class HotelUnitTestHelper {
         return hotelOptional.get();
     }
 
-    public static void verifyHotelDetails(Hotel hotelFromURLResponse, String hotelAbout, String hotelLocation, String hotelName) {
+    public static void verifyHotelDetails(Hotel hotel, String hotelAbout, String hotelLocation, String hotelName) {
         Assert.notNull(
-            hotelFromURLResponse,
+            hotel,
             "Hotel get from the response should not be nil."
         );
 
         Assertions.assertEquals(
             hotelAbout,
-            hotelFromURLResponse.getAbout(),
-            "Hotel About from URL response " + hotelFromURLResponse.getAbout() + " should be equal to the " + hotelAbout
+            hotel.getAbout(),
+            "Hotel About " + hotel.getAbout() + " should be equal to the " + hotelAbout
         );
 
         Assertions.assertEquals(
             hotelLocation,
-            hotelFromURLResponse.getLocation(),
-            "Hotel Location from URL response " + hotelFromURLResponse.getLocation() + " should be equal to the " + hotelAbout
+            hotel.getLocation(),
+            "Hotel Location " + hotel.getLocation() + " should be equal to the " + hotelAbout
         );
 
         Assertions.assertEquals(
             hotelName,
-            hotelFromURLResponse.getName(),
-            "Hotel Name from URL response " + hotelFromURLResponse.getName() + " should be equal to the " + hotelName
+            hotel.getName(),
+            "Hotel Name " + hotel.getName() + " should be equal to the " + hotelName
         );
     }
 

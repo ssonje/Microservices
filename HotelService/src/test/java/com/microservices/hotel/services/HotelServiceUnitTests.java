@@ -28,7 +28,7 @@ public class HotelServiceUnitTests {
 
     @BeforeEach
     void setUp() {
-        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObject();
         hotelRepository.save(hotel);
     }
 
@@ -53,7 +53,7 @@ public class HotelServiceUnitTests {
 
     @Test
     public void testgetAllHotels() {
-        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObject();
     
         // save two more hotel objects
         hotelService.saveHotel(hotel);
@@ -70,7 +70,7 @@ public class HotelServiceUnitTests {
 
     @Test
     public void testdeleteHotel() {
-        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObject();
     
         // save two more hotel objects
         hotelService.saveHotel(hotel);
