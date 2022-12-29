@@ -1,6 +1,7 @@
 package com.microservices.rating.RatingService.controllers;
 
 import com.microservices.rating.RatingService.entities.Rating;
+import com.microservices.rating.RatingService.payloads.APIResponse;
 import com.microservices.rating.RatingService.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,12 @@ public class RatingController {
 
     @PostMapping("/rating/new")
     public ResponseEntity<?> saveRating(@RequestBody Rating rating) {
-        Rating savedRating = ratingService.saveRating(rating);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedRating);
+        APIResponse apiResponse = ratingService.saveRating(rating);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/ratings/user/{userID}")
-    public ResponseEntity<?> getRatingsFromUserID(@PathVariable Integer userID) {
+    public ResponseEntity<?> getRatingsFromUserID(@PathVariable String userID) {
         List<Rating> rating = ratingService.getRatingsFromUserID(userID);
         return ResponseEntity.status(HttpStatus.OK).body(rating);
     }
@@ -35,15 +36,15 @@ public class RatingController {
     }
 
     @PostMapping("/rating/delete/{ratingID}")
-    public ResponseEntity<?> deleteRating(@PathVariable Integer ratingID) {
-        Boolean isRatingDeleted = ratingService.deleteRating(ratingID);
-        return ResponseEntity.status(HttpStatus.CREATED).body(isRatingDeleted);
+    public ResponseEntity<?> deleteRating(@PathVariable String ratingID) {
+        APIResponse apiResponse = ratingService.deleteRating(ratingID);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/rating/modify")
     public ResponseEntity<?> modifyRating(@RequestBody Rating rating) {
-        Rating modifiedRating = ratingService.modifyRating(rating);
-        return ResponseEntity.status(HttpStatus.CREATED).body(modifiedRating);
+        APIResponse apiResponse = ratingService.modifyRating(rating);
+        return ResponseEntity.ok(apiResponse);
     }
 
 }

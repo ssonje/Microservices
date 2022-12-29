@@ -1,15 +1,17 @@
 package com.microservices.user.UserService.services;
 
 import com.microservices.user.UserService.entities.User;
+import com.microservices.user.UserService.payloads.APIResponse;
 
 import java.util.List;
 
 public interface UserService {
 
-    User saveUser(User user);
+    APIResponse saveUser(User user);
     List<User> getAllUsers();
     User getUserFromID(String userID);
-    Boolean deleteUser(String userID);
-    User modifyUser(User user);
+    APIResponse deleteUser(String userID);
+    APIResponse modifyUser(User user);
+    APIResponse saveUserWithID(User user, String userID);
 
 }

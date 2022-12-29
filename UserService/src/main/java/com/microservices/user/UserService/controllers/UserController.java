@@ -5,6 +5,7 @@ import com.microservices.user.UserService.entities.Rating;
 import com.microservices.user.UserService.entities.User;
 import com.microservices.user.UserService.external.services.HotelService;
 import com.microservices.user.UserService.external.services.RatingService;
+import com.microservices.user.UserService.payloads.APIResponse;
 import com.microservices.user.UserService.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class UserController {
 
     @PostMapping("/user/new")
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        APIResponse apiResponse = userService.saveUser(user);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/user/{userID}")
@@ -58,14 +59,14 @@ public class UserController {
 
     @PostMapping("/user/delete/{userID}")
     public ResponseEntity<?> deleteUser(@PathVariable String userID) {
-        Boolean isUserDeleted = userService.deleteUser(userID);
-        return ResponseEntity.status(HttpStatus.CREATED).body(isUserDeleted);
+        APIResponse apiResponse = userService.deleteUser(userID);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/user/modify")
     public ResponseEntity<?> modifyUser(@RequestBody User user) {
-        User modifiedUser = userService.modifyUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(modifiedUser);
+        APIResponse apiResponse = userService.modifyUser(user);
+        return ResponseEntity.ok(apiResponse);
     }
 
 }

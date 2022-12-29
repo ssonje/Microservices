@@ -11,6 +11,6 @@ import java.util.List;
 public interface RatingService {
 
     @GetMapping("/ratings/user/{userID}")
-    List<Rating> getRatingsGivenByUserWithID(@PathVariable("userID") Integer userID);
+    List<Rating> getRatingsGivenByUserWithID(@PathVariable("userID") String userID);
 
 }
