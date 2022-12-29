@@ -24,7 +24,7 @@ public class HotelController {
     }
 
     @GetMapping("/hotel/{hotelID}")
-    public ResponseEntity<?> getHotelFromID(@PathVariable Integer hotelID) {
+    public ResponseEntity<?> getHotelFromID(@PathVariable String hotelID) {
         Hotel hotel = hotelService.getHotelFromID(hotelID);
         return ResponseEntity.status(HttpStatus.OK).body(hotel);
     }
@@ -36,7 +36,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/hotel/delete/{hotelID}")
-    public ResponseEntity<?> deleteHotel(@PathVariable Integer hotelID) {
+    public ResponseEntity<?> deleteHotel(@PathVariable String hotelID) {
         APIResponse apiResponse = hotelService.deleteHotel(hotelID);
         return ResponseEntity.ok(apiResponse);
     }

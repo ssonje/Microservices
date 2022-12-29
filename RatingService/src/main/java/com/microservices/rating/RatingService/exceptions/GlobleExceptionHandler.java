@@ -14,7 +14,7 @@ public class GlobleExceptionHandler {
         APIResponse apiResponse = APIResponse.builder()
                 .message(exception.getMessage())
                 .httpStatus(HttpStatus.NOT_FOUND)
-                .status(false)
+                .responseStatus(false)
                 .build();
         return new ResponseEntity<APIResponse>(apiResponse, HttpStatus.NOT_FOUND);
     }

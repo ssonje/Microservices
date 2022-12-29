@@ -15,11 +15,9 @@ import lombok.Setter;
 public class Rating {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    private Integer userID;
-    private Integer hotelID;
+    private String id;
+    private String userID;
+    private String hotelID;
     private Integer rating;
     private String feedback;
 

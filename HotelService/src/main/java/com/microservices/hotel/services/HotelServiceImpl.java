@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class HotelServiceImpl implements HotelService {
@@ -18,9 +18,13 @@ public class HotelServiceImpl implements HotelService {
     @Autowired
     private HotelRepository hotelRepository;
 
+    // MARK: - API's
+
     @Override
     public APIResponse saveHotel(Hotel hotel) {
         try {
+            String randomUserId = UUID.randomUUID().toString();
+            hotel.setId(randomUserId);
             hotelRepository.save(hotel);
             return HotelServiceImpl.getAPIResponse(
                     HotelControllerAPIResponseConstants.ADD_HOTEL_SUCCESS,
@@ -37,14 +41,14 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Hotel getHotelFromID(Integer hotelID) {
+    public Hotel getHotelFromID(String hotelID) {
         Hotel hotel = hotelRepository.findById(hotelID).orElseThrow(() ->
                 new ResourceNotFoundException("Hotel with ID - " + hotelID + " not found..."));
         return hotel;
     }
 
     @Override
-    public APIResponse deleteHotel(Integer hotelID) {
+    public APIResponse deleteHotel(String hotelID) {
         try {
             hotelRepository.deleteById(hotelID);
             return HotelServiceImpl.getAPIResponse(
@@ -59,16 +63,11 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public APIResponse modifyHotel(Hotel hotel) {
         try {
-            Optional<Hotel> hotelOptional = hotelRepository.findById(hotel.getId());
-            Hotel hotelFromID = hotelOptional.get();
-            hotelFromID.setName(hotel.getName());
-            hotelFromID.setAbout(hotel.getAbout());
-            hotelFromID.setLocation(hotel.getLocation());
-            hotelRepository.save(hotelFromID);
+            hotelRepository.save(hotel);
             return HotelServiceImpl.getAPIResponse(
-                    HotelControllerAPIResponseConstants.MODIFIED_HOTEL_SUCCESS,
-                    HttpStatus.OK,
-                    true);
+                HotelControllerAPIResponseConstants.MODIFIED_HOTEL_SUCCESS,
+                HttpStatus.OK,
+                true);
         } catch (Exception e) {
             return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
         }
@@ -86,6 +85,8 @@ public class HotelServiceImpl implements HotelService {
             return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
         }
     }
+
+    // MARK: - Private helper methods
 
     private static APIResponse getAPIResponse(String message, HttpStatus httpStatus, Boolean responseStatus) {
         return APIResponse.builder()

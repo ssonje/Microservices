@@ -9,8 +9,8 @@ public interface HotelService {
 
     APIResponse saveHotel(Hotel hotel);
     List<Hotel> getAllHotels();
-    Hotel getHotelFromID(Integer hotelID);
-    APIResponse deleteHotel(Integer hotelID);
+    Hotel getHotelFromID(String hotelID);
+    APIResponse deleteHotel(String hotelID);
     APIResponse  modifyHotel(Hotel hotel);
     APIResponse  deleteAllHotels();
 

@@ -47,7 +47,7 @@ public class HotelControllerUnitTest extends AbstractTest {
         Hotel hotel = HotelControllerUnitTest.getHotelObject();
         hotelService.saveHotel(hotel);
 
-        Integer hotelID = hotelService.getAllHotels().get(0).getId();
+        String hotelID = hotelService.getAllHotels().get(0).getId();
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
                 .get(uri, hotelID)
