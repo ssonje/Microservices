@@ -1,4 +1,4 @@
-package com.microservices.hotel.constants;
+package com.microservices.hotel.helpers.constants;
 
 public final class HotelControllerTestAPIResponseConstants {
 

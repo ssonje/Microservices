@@ -1,21 +1,18 @@
 package com.microservices.hotel.services;
 
 import com.microservices.hotel.entities.Hotel;
+import com.microservices.hotel.helpers.HotelUnitTestHelper;
 import com.microservices.hotel.repositories.HotelRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -27,16 +24,11 @@ public class HotelServiceUnitTests {
     @Autowired
     private HotelRepository hotelRepository;
 
-    private static String TestHotelID = UUID.randomUUID().toString();
-    private static String TestHotelName = "Test Hotel Name";
-    private static String TestHotelAbout = "Test Hotel About";
-    private static String TestHotelLocation = "Test Hotel Location";
-
     // MARK: - Lifecycle methods
 
     @BeforeEach
     void setUp() {
-        Hotel hotel = getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
         hotelRepository.save(hotel);
     }
 
@@ -49,19 +41,19 @@ public class HotelServiceUnitTests {
 
     @Test
     public void testGetHotelByID() {
-        Hotel hotelFromService = hotelService.getHotelFromID(TestHotelID);
-        verifyHotelDetails(hotelFromService, TestHotelAbout, TestHotelLocation, TestHotelName);
+        Hotel hotelFromService = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID);
+        HotelUnitTestHelper.verifyHotelDetails(hotelFromService);
     }
 
     @Test
     public void testSaveHotel() {
-        Hotel hotelFromService = hotelService.getHotelFromID(TestHotelID);
-        verifyHotelDetails(hotelFromService, TestHotelAbout, TestHotelLocation, TestHotelName);
+        Hotel hotelFromService = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID);
+        HotelUnitTestHelper.verifyHotelDetails(hotelFromService);
     }
 
     @Test
     public void testgetAllHotels() {
-        Hotel hotel = getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
     
         // save two more hotel objects
         hotelService.saveHotel(hotel);
@@ -73,12 +65,12 @@ public class HotelServiceUnitTests {
         hotels.add(hotel);
         hotels.add(hotel);
 
-        verifyGetHotelsLength(hotels, hotelService.getAllHotels());
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels());
     }
 
     @Test
     public void testdeleteHotel() {
-        Hotel hotel = getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
     
         // save two more hotel objects
         hotelService.saveHotel(hotel);
@@ -91,81 +83,27 @@ public class HotelServiceUnitTests {
         hotels.add(hotel);
 
         // Before deleting information of one hotel
-        verifyGetHotelsLength(hotels, hotelService.getAllHotels());
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels());
 
         // Remove hotel from the hotels list and from the DB
         hotels.remove(0);
-        hotelService.deleteHotel(TestHotelID);
+        hotelService.deleteHotel(HotelUnitTestHelper.TestHotelID);
 
         // After deleting information of one hotel
-        verifyGetHotelsLength(hotels, hotelService.getAllHotels());
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels());
     }
 
     @Test
     public void testmodifyHotel() {
-        Hotel hotel = getHotelObject();
-        hotelRepository.save(hotel);
-
-        Hotel modifiedHotel = getHotelFromOptionalHotelObject(hotelRepository);
-        modifiedHotel.setName(TestHotelName + " Modified");
+        Hotel modifiedHotel = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
+        String modifiedName = HotelUnitTestHelper.TestHotelName + " Modified";
+        modifiedHotel.setName(modifiedName);
 
         hotelService.modifyHotel(modifiedHotel);
 
         // Verify the hotel details
-        Hotel hotelFromRepository = getHotelFromOptionalHotelObject(hotelRepository);
-        verifyHotelDetails(hotelFromRepository, TestHotelAbout, TestHotelLocation, TestHotelName + " Modified");
-    }
-
-    // MARK: - Private Helpers
-
-    private static Hotel getHotelObject() {
-        Hotel hotel = Hotel.builder()
-            .id(TestHotelID)
-            .name(TestHotelName)
-            .about(TestHotelAbout)
-            .location(TestHotelLocation)
-            .build();
-        return hotel;
-    }
-
-    private static Hotel getHotelFromOptionalHotelObject(HotelRepository hotelRepository) {
-        Optional<Hotel> hotelOptional = hotelRepository.findById(TestHotelID);
-        return hotelOptional.get();
-    }
-
-    private static void verifyHotelDetails(Hotel hotel, String hotelAbout, String hotelLocation, String hotelName) {
-        Assert.notNull(
-            hotel,
-            "Hotel get from the service should not be nil."
-        );
-
-        Assertions.assertEquals(
-            hotelAbout,
-            hotel.getAbout(),
-            "Hotel About from URL response " + hotel.getAbout() + " should be equal to the " + hotelAbout
-        );
-
-        Assertions.assertEquals(
-            hotelLocation,
-            hotel.getLocation(),
-            "Hotel Location from URL response " + hotel.getLocation() + " should be equal to the " + hotelAbout
-        );
-
-        Assertions.assertEquals(
-            hotelName,
-            hotel.getName(),
-            "Hotel Name from URL response " + hotel.getName() + " should be equal to the " + hotelName
-        );
-    }
-
-    private static void verifyGetHotelsLength(List<Hotel> hotels, List<Hotel> hotelsGetFromService) {
-        Integer hotelsLength = hotels.toArray().length;
-        Integer hotelsGetFromServiceLegnth = hotelsGetFromService.toArray().length;
-        Assertions.assertEquals(
-            hotelsLength,
-            hotelsGetFromServiceLegnth,
-            "hotelListLength " + hotelsLength + " should match with the hotelRepositoryLength length = " + hotelsGetFromServiceLegnth
-        );
+        Hotel hotelFromRepository = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
+        HotelUnitTestHelper.verifyHotelDetails(hotelFromRepository, modifiedName);
     }
 
 }
