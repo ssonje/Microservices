@@ -32,7 +32,7 @@ public class HotelControllerUnitTest extends AbstractTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObject();
         hotelService.saveHotelWithID(hotel);
     }
 
@@ -81,7 +81,7 @@ public class HotelControllerUnitTest extends AbstractTest {
     public void testSaveHotel() throws Exception {
         String saveHotelURLString = "/hotel-service/hotel/new";
 
-        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObject();
         String inputJson = super.mapToJson(hotel);
 
         MvcResult mvcResult = mvc

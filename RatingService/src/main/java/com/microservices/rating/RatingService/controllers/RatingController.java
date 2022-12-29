@@ -19,7 +19,13 @@ public class RatingController {
 
     @PostMapping("/rating/new")
     public ResponseEntity<?> saveRating(@RequestBody Rating rating) {
-        APIResponse apiResponse = ratingService.saveRating(rating);
+        APIResponse apiResponse;
+        if (rating.getId() != null) {
+            apiResponse = ratingService.saveRatingByRatingID(rating);
+        } else {
+            apiResponse = ratingService.saveRating(rating);
+        }
+
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -35,13 +41,13 @@ public class RatingController {
         return ResponseEntity.status(HttpStatus.OK).body(ratings);
     }
 
-    @PostMapping("/rating/delete/{ratingID}")
+    @DeleteMapping("/rating/delete/{ratingID}")
     public ResponseEntity<?> deleteRating(@PathVariable String ratingID) {
         APIResponse apiResponse = ratingService.deleteRating(ratingID);
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PostMapping("/rating/modify")
+    @PutMapping("/rating/modify")
     public ResponseEntity<?> modifyRating(@RequestBody Rating rating) {
         APIResponse apiResponse = ratingService.modifyRating(rating);
         return ResponseEntity.ok(apiResponse);

@@ -12,6 +12,7 @@ public interface RatingService {
     List<Rating> getRatingsFromUserID(String userID);
     APIResponse deleteRating(String ratingID);
     APIResponse modifyRating(Rating rating);
-
+    APIResponse deleteAllRatings();
+    APIResponse saveRatingByRatingID(Rating rating);
 
 }

@@ -36,6 +36,19 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public APIResponse saveRatingByRatingID(Rating rating) {
+        try {
+            ratingRepository.save(rating);
+            return RatingServiceImpl.getAPIResponse(
+                RatingControllerAPIResponseConstants.ADD_RATING_SUCCESS,
+                HttpStatus.CREATED,
+                true);
+        } catch (Exception e) {
+            return RatingServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
+    }
+
+    @Override
     public List<Rating> getAllRatings() {
         return ratingRepository.findAll();
     }
@@ -56,6 +69,19 @@ public class RatingServiceImpl implements RatingService {
     public APIResponse deleteRating(String ratingID) {
         try {
             ratingRepository.deleteById(ratingID);
+            return RatingServiceImpl.getAPIResponse(
+                RatingControllerAPIResponseConstants.DELETE_RATING_SUCCESS,
+                HttpStatus.OK,
+                true);
+        } catch (Exception e) {
+            return RatingServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
+    }
+
+    @Override
+    public APIResponse deleteAllRatings() {
+        try {
+            ratingRepository.deleteAll();
             return RatingServiceImpl.getAPIResponse(
                 RatingControllerAPIResponseConstants.DELETE_RATING_SUCCESS,
                 HttpStatus.OK,
