@@ -1,16 +1,17 @@
 package com.microservices.hotel.repositories;
 
 import com.microservices.hotel.entities.Hotel;
+import com.microservices.hotel.helpers.HotelUnitTestHelper;
+
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -20,17 +21,11 @@ public class HotelRepositoryUnitTests {
     @Autowired
     private HotelRepository hotelRepository;
 
-    private static String TestHotelName = "Test Hotel Name";
-    private static String TestHotelAbout = "Test Hotel About";
-    private static String TestHotelLocation = "Test Hotel Location";
+    // MARK: - Lifecycle methods
 
     @BeforeEach
     void setUp() {
-        Hotel hotel = new Hotel().builder()
-                .name(HotelRepositoryUnitTests.TestHotelName)
-                .about(HotelRepositoryUnitTests.TestHotelAbout)
-                .location(HotelRepositoryUnitTests.TestHotelLocation)
-                .build();
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
         hotelRepository.save(hotel);
     }
 
@@ -39,97 +34,63 @@ public class HotelRepositoryUnitTests {
         hotelRepository.deleteAll();
     }
 
+    // MARK: - Tests
+
     @Test
     void testGetHotelByID() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
-
-        Hotel hotel = hotelList.get(0);
-        Assert.notNull(
-                hotel,
-                "Hotel which is setup in the setUp method should be present."
-        );
-
-        Assertions.assertEquals(
-                HotelRepositoryUnitTests.TestHotelAbout,
-                hotel.getAbout(),
-                "Hotel About should be equal to the " + HotelRepositoryUnitTests.TestHotelAbout
-        );
-
-        Assertions.assertEquals(
-                HotelRepositoryUnitTests.TestHotelLocation,
-                hotel.getLocation(),
-                "Hotel Location should be equal to the " + HotelRepositoryUnitTests.TestHotelLocation
-        );
-
-        Assertions.assertEquals(
-                HotelRepositoryUnitTests.TestHotelName,
-                hotel.getName(),
-                "Hotel Name should be equal to the " + HotelRepositoryUnitTests.TestHotelName
-        );
+        Hotel hotelFromRepository = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
+        HotelUnitTestHelper.verifyHotelDetails(hotelFromRepository);
     }
 
     @Test
     void testGetAllHotels() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+
+        // Add three hotels to the hotels list
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(hotel);
+
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelRepository.findAll());
     }
 
     @Test
     void testSaveHotel() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
+        Hotel hotelFromRepository = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
+        HotelUnitTestHelper.verifyHotelDetails(hotelFromRepository);
     }
 
     @Test
     void testDeleteHotel() {
-        hotelRepository.deleteAll();
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Assertions.assertEquals(
-                0,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to Zero."
-        );
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
+    
+        // Add three hotels to the hotels list
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(hotel);
+
+        // Before deleting information of one hotel
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelRepository.findAll());
+
+        // Remove hotel from the hotels list and from the DB
+        hotels.remove(0);
+        hotelRepository.deleteById(HotelUnitTestHelper.TestHotelID);
+
+        // After deleting information of one hotel
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelRepository.findAll());
     }
 
     @Test
     void testModifyHotel() {
-        List<Hotel> hotelList = hotelRepository.findAll();
-        Hotel hotel = hotelList.get(0);
-        Assertions.assertEquals(
-                1,
-                hotelList.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
-
-        hotel.setName("Modified Test Name");
+        Hotel hotel = HotelUnitTestHelper.getHotelObject();
         hotelRepository.save(hotel);
 
-        List<Hotel> hotelListModified = hotelRepository.findAll();
-        Hotel hotelModified = hotelListModified.get(0);
-        Assertions.assertEquals(
-                1,
-                hotelListModified.toArray().length,
-                "Length of Hotels array should be equal to One."
-        );
+        Hotel modifiedHotel = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
+        String modifyName = HotelUnitTestHelper.TestHotelName + " Modified";
+        modifiedHotel.setName(modifyName);
+        hotelRepository.save(modifiedHotel);
 
-        Assertions.assertEquals(
-                "Modified Test Name",
-                hotelModified.getName(),
-                "Modify Hotel operation is not working as expected."
-        );
+        // Verify the hotel details
+        Hotel hotelFromRepository = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
+        HotelUnitTestHelper.verifyHotelDetails(hotelFromRepository, modifyName);
     }
 
 }

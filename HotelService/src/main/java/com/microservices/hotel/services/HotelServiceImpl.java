@@ -23,8 +23,8 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public APIResponse saveHotel(Hotel hotel) {
         try {
-            String randomUserId = UUID.randomUUID().toString();
-            hotel.setId(randomUserId);
+            String randomHotelId = UUID.randomUUID().toString();
+            hotel.setId(randomHotelId);
             hotelRepository.save(hotel);
             return HotelServiceImpl.getAPIResponse(
                     HotelControllerAPIResponseConstants.ADD_HOTEL_SUCCESS,
@@ -80,6 +80,21 @@ public class HotelServiceImpl implements HotelService {
             return HotelServiceImpl.getAPIResponse(
                     HotelControllerAPIResponseConstants.DELETE_ALL_HOTELS_SUCCESS,
                     HttpStatus.OK,
+                    true);
+        } catch (Exception e) {
+            return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
+    }
+
+    // MARK: - Helper API's
+
+    @Override
+    public APIResponse saveHotelWithID(Hotel hotel) {
+        try {
+            hotelRepository.save(hotel);
+            return HotelServiceImpl.getAPIResponse(
+                    HotelControllerAPIResponseConstants.ADD_HOTEL_SUCCESS,
+                    HttpStatus.CREATED,
                     true);
         } catch (Exception e) {
             return HotelServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);

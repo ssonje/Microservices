@@ -11,7 +11,8 @@ public interface HotelService {
     List<Hotel> getAllHotels();
     Hotel getHotelFromID(String hotelID);
     APIResponse deleteHotel(String hotelID);
-    APIResponse  modifyHotel(Hotel hotel);
-    APIResponse  deleteAllHotels();
+    APIResponse modifyHotel(Hotel hotel);
+    APIResponse deleteAllHotels();
+    APIResponse saveHotelWithID(Hotel hotel);
 
 }
