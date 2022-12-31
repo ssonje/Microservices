@@ -80,9 +80,6 @@ public class HotelRepositoryUnitTests {
 
     @Test
     void testModifyHotel() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
-        hotelRepository.save(hotel);
-
         Hotel modifiedHotel = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
         String modifyName = HotelUnitTestHelper.TestHotelName + " Modified";
         modifiedHotel.setName(modifyName);

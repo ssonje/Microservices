@@ -77,9 +77,29 @@ public class UserServiceImpl implements UserService {
     // MARK: - Helper API's
 
     @Override
-    public APIResponse saveUserWithID(User user, String userID) {
-        user.setId(userID);
-        return saveUser(user);
+    public APIResponse deleteAllUsers() {
+        try {
+            userRepository.deleteAll();
+            return UserServiceImpl.getAPIResponse(
+                UserControllerAPIResponseConstants.DELETE_ALL_USERS_SUCCESS,
+                HttpStatus.OK,
+                true);
+        } catch (Exception e) {
+            return UserServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
+    }
+
+    @Override
+    public APIResponse saveUserByUserID(User user) {
+        try {
+            userRepository.save(user);
+            return UserServiceImpl.getAPIResponse(
+                UserControllerAPIResponseConstants.ADD_USER_SUCCESS,
+                HttpStatus.CREATED,
+                true);
+        } catch (Exception e) {
+            return UserServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
     }
 
     // MARK: - Private helper methods
