@@ -29,7 +29,7 @@ public final class UserUnitTestHelper {
     public static String TestHotelAbout = "Test Hotel About";
     public static String TestHotelLocation = "Test Hotel Location";
 
-    public static User createUserObject() {
+    public static User createUserObjectWithUserID() {
         List<Rating> ratings = new ArrayList<>();
         Hotel hotel = UserUnitTestHelper.createHotelObject();
         Rating rating = UserUnitTestHelper.createRatingObject();
@@ -37,6 +37,21 @@ public final class UserUnitTestHelper {
         ratings.add(rating);
         return User.builder()
             .id(TestUserID)
+            .name(TestUserName)
+            .about(TestUserAbout)
+            .email(TestUserEmail)
+            .ratings(ratings)
+            .build();
+    }
+
+    public static User createUserObjectWithoutUserID() {
+        List<Rating> ratings = new ArrayList<>();
+        Hotel hotel = UserUnitTestHelper.createHotelObject();
+        Rating rating = UserUnitTestHelper.createRatingObject();
+        rating.setHotel(hotel);
+        ratings.add(rating);
+        return User.builder()
+            .id(UUID.randomUUID().toString())
             .name(TestUserName)
             .about(TestUserAbout)
             .email(TestUserEmail)
@@ -100,6 +115,15 @@ public final class UserUnitTestHelper {
             .location(TestHotelLocation)
             .build();
         return hotel;
+    }
+
+    public static void verifyUserWithoutIDDetails(List<User> users) {
+        User user = users.get(0);
+        Assertions.assertEquals(users.toArray().length > 0, true);
+        Assertions.assertNotNull(user.getId());
+        Assertions.assertNotNull(user.getAbout());
+        Assertions.assertNotNull(user.getEmail());
+        Assertions.assertNotNull(user.getName());
     }
 
 }

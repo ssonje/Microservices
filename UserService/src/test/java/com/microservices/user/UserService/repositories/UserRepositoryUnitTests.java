@@ -25,7 +25,7 @@ public class UserRepositoryUnitTests {
 
     @BeforeEach
     void setUp() {
-        User user = UserUnitTestHelper.createUserObject();
+        User user = UserUnitTestHelper.createUserObjectWithUserID();
         userRepository.save(user);
     }
 
@@ -44,7 +44,7 @@ public class UserRepositoryUnitTests {
 
     @Test
     void testGetAllUsers() {
-        User user = UserUnitTestHelper.createUserObject();
+        User user = UserUnitTestHelper.createUserObjectWithUserID();
 
         // Add user to the users list
         List<User> users = new ArrayList<>();
@@ -61,7 +61,7 @@ public class UserRepositoryUnitTests {
 
     @Test
     void testDeleteUserByID() {
-        User user = UserUnitTestHelper.createUserObject();
+        User user = UserUnitTestHelper.createUserObjectWithUserID();
     
         // Add user to the users list
         List<User> users = new ArrayList<>();
