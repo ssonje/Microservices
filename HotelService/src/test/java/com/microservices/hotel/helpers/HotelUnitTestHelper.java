@@ -35,28 +35,10 @@ public final class HotelUnitTestHelper {
     }
 
     public static void verifyHotelDetails(Hotel hotel, String hotelAbout, String hotelLocation, String hotelName) {
-        Assert.notNull(
-            hotel,
-            "Hotel get from the response should not be nil."
-        );
-
-        Assertions.assertEquals(
-            hotelAbout,
-            hotel.getAbout(),
-            "Hotel About " + hotel.getAbout() + " should be equal to the " + hotelAbout
-        );
-
-        Assertions.assertEquals(
-            hotelLocation,
-            hotel.getLocation(),
-            "Hotel Location " + hotel.getLocation() + " should be equal to the " + hotelAbout
-        );
-
-        Assertions.assertEquals(
-            hotelName,
-            hotel.getName(),
-            "Hotel Name " + hotel.getName() + " should be equal to the " + hotelName
-        );
+        Assert.notNull(hotel, "Hotel get from the response should not be nil.");
+        Assertions.assertEquals(hotelAbout, hotel.getAbout());
+        Assertions.assertEquals(hotelLocation, hotel.getLocation());
+        Assertions.assertEquals(hotelName, hotel.getName());
     }
 
     public static void verifyHotelDetails(Hotel hotelFromURLResponse) {
@@ -79,11 +61,7 @@ public final class HotelUnitTestHelper {
     public static void verifyGetHotelsLength(List<Hotel> hotels, List<Hotel> hotelsGetFromRepository) {
         Integer hotelsLength = hotels.toArray().length;
         Integer hotelsGetFromRepositoryLegnth = hotelsGetFromRepository.toArray().length;
-        Assertions.assertEquals(
-            hotelsLength,
-            hotelsGetFromRepositoryLegnth,
-            "hotelListLength " + hotelsLength + " should match with the hotelRepositoryLength length = " + hotelsGetFromRepositoryLegnth
-        );
+        Assertions.assertEquals(hotelsLength, hotelsGetFromRepositoryLegnth);
     }
 
 }

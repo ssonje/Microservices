@@ -37,11 +37,7 @@ public final class RatingUnitTestHelper {
     }
 
     public static void verifyRatingDetails(Rating rating, String hotelID, String userID, Integer hotelRating, String feedback) {
-        Assert.notNull(
-            rating,
-            "Rating get from the URL response should not be nil."
-        );
-
+        Assert.notNull(rating, "Rating get from the URL response should not be nil.");
         verifyRatingProperty(hotelID, rating.getHotelID());
         verifyRatingProperty(userID, rating.getUserID());
         verifyRatingProperty(hotelRating, rating.getRating());
@@ -61,31 +57,19 @@ public final class RatingUnitTestHelper {
     }
 
     public static void verifyRatingProperty(String expectedValue, String actualValue) {
-        Assertions.assertEquals(
-            expectedValue,
-            actualValue
-        );
+        Assertions.assertEquals(expectedValue, actualValue);
     }
 
     public static void verifyRatingProperty(Integer expectedValue, Integer actualValue) {
-        Assertions.assertEquals(
-            expectedValue,
-            actualValue
-        );
+        Assertions.assertEquals(expectedValue, actualValue);
     }
 
     public static void verifyRatingProperty(Boolean expectedValue, Boolean actualValue) {
-        Assertions.assertEquals(
-            expectedValue,
-            actualValue
-        );
+        Assertions.assertEquals(expectedValue, actualValue);
     }
 
     public static void verifyRatingProperty(HttpStatus expectedValue, HttpStatus actualValue) {
-        Assertions.assertEquals(
-            expectedValue,
-            actualValue
-        );
+        Assertions.assertEquals(expectedValue, actualValue);
     }
 
     public static void verifyRatingDetails(Rating rating) {

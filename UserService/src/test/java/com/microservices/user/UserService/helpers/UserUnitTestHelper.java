@@ -18,11 +18,11 @@ import com.microservices.user.UserService.repositories.UserRepository;
 public final class UserUnitTestHelper {
 
     public static String TestUserID = UUID.randomUUID().toString();
+    public static String TestRatingID = UUID.randomUUID().toString();
+    public static String TestHotelID = UUID.randomUUID().toString();
     public static String TestUserName = "Test User Name";
     public static String TestUserAbout = "Test User About";
     public static String TestUserEmail = "Test@gmail.com";
-    public static String TestRatingID = UUID.randomUUID().toString();
-    public static String TestHotelID = UUID.randomUUID().toString();
     public static Integer TestRatingRating = 10;
     public static String TestRatingFeedback = "Very good Hotel";
     public static String TestHotelName = "Test Hotel Name";
@@ -50,28 +50,10 @@ public final class UserUnitTestHelper {
     }
 
     public static void verifyUserDetails(User user, String userName, String userAbout, String userEmail) {
-        Assert.notNull(
-            user,
-            "User get from the response should not be nil."
-        );
-
-        Assertions.assertEquals(
-            userName,
-            user.getName(),
-            "User Name `" + user.getName() + "` should be equal to the `" + userName + "`"
-        );
-
-        Assertions.assertEquals(
-            userAbout,
-            user.getAbout(),
-            "User About " + user.getAbout() + " should be equal to the " + userAbout
-        );
-
-        Assertions.assertEquals(
-            userEmail,
-            user.getEmail(),
-            "User Email " + user.getEmail() + " should be equal to the " + userEmail
-        );
+        Assert.notNull(user, "User get from the response should not be nil.");
+        Assertions.assertEquals(userName, user.getName());
+        Assertions.assertEquals(userAbout, user.getAbout());
+        Assertions.assertEquals(userEmail, user.getEmail());
     }
 
     public static void verifyUserDetails(User user) {
@@ -94,11 +76,7 @@ public final class UserUnitTestHelper {
     public static void verifyGetUsersLength(List<User> users, List<User> usersGetFromRepository) {
         Integer usersLength = users.toArray().length;
         Integer usersGetFromRepositoryLegnth = usersGetFromRepository.toArray().length;
-        Assertions.assertEquals(
-            usersLength,
-            usersGetFromRepositoryLegnth,
-            "users length " + usersLength + " should match with the usersGetFromRepository length = " + usersGetFromRepositoryLegnth
-        );
+        Assertions.assertEquals(usersLength, usersGetFromRepositoryLegnth);
     }
 
     // MARK: - Private Helpers
