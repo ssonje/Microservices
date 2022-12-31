@@ -2,14 +2,14 @@ package com.microservices.hotel.services;
 
 import com.microservices.hotel.entities.Hotel;
 import com.microservices.hotel.payloads.APIResponse;
-
-import java.util.List;
+import com.microservices.hotel.payloads.APIResponseWithHotel;
+import com.microservices.hotel.payloads.APIResponseWithHotels;
 
 public interface HotelService {
 
     APIResponse saveHotel(Hotel hotel);
-    List<Hotel> getAllHotels();
-    Hotel getHotelFromID(String hotelID);
+    APIResponseWithHotels getAllHotels();
+    APIResponseWithHotel getHotelFromID(String hotelID);
     APIResponse deleteHotel(String hotelID);
     APIResponse modifyHotel(Hotel hotel);
     APIResponse deleteAllHotels();

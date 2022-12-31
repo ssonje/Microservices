@@ -2,13 +2,12 @@ package com.microservices.hotel.controllers;
 
 import com.microservices.hotel.entities.Hotel;
 import com.microservices.hotel.payloads.APIResponse;
+import com.microservices.hotel.payloads.APIResponseWithHotel;
+import com.microservices.hotel.payloads.APIResponseWithHotels;
 import com.microservices.hotel.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/hotel-service")
@@ -31,14 +30,14 @@ public class HotelController {
 
     @GetMapping("/hotel/{hotelID}")
     public ResponseEntity<?> getHotelFromID(@PathVariable String hotelID) {
-        Hotel hotel = hotelService.getHotelFromID(hotelID);
-        return ResponseEntity.status(HttpStatus.OK).body(hotel);
+        APIResponseWithHotel apiResponse = hotelService.getHotelFromID(hotelID);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/hotels")
     public ResponseEntity<?> getAllHotels() {
-        List<Hotel> hotels = hotelService.getAllHotels();
-        return ResponseEntity.status(HttpStatus.OK).body(hotels);
+        APIResponseWithHotels apiResponse = hotelService.getAllHotels();
+        return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/hotel/delete/{hotelID}")

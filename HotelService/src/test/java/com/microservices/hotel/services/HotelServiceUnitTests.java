@@ -4,7 +4,6 @@ import com.microservices.hotel.entities.Hotel;
 import com.microservices.hotel.helpers.HotelUnitTestHelper;
 import com.microservices.hotel.repositories.HotelRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,12 +25,6 @@ public class HotelServiceUnitTests {
 
     // MARK: - Lifecycle methods
 
-    @BeforeEach
-    void setUp() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
-        hotelRepository.save(hotel);
-    }
-
     @AfterEach
     void tearDown() {
         hotelRepository.deleteAll();
@@ -41,19 +34,30 @@ public class HotelServiceUnitTests {
 
     @Test
     public void testGetHotelByID() {
-        Hotel hotelFromService = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID);
+        createAndSaveHotelWithID(hotelRepository);
+        Hotel hotelFromService = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID).getHotel();
         HotelUnitTestHelper.verifyHotelDetails(hotelFromService);
     }
 
     @Test
-    public void testSaveHotel() {
-        Hotel hotelFromService = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID);
+    public void testSaveHotelWithHotelID() {
+        createAndSaveHotelWithID(hotelRepository);
+        Hotel hotelFromService = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID).getHotel();
         HotelUnitTestHelper.verifyHotelDetails(hotelFromService);
+    }
+
+    @Test
+    public void testSaveHotelWithoutID() {
+        createAndSaveHotelWithoutID(hotelRepository);
+        List<Hotel> hotels = hotelRepository.findAll();
+        HotelUnitTestHelper.verifyHotelWithoutIDDetails(hotels);
     }
 
     @Test
     public void testgetAllHotels() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        createAndSaveHotelWithID(hotelRepository);
+
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
     
         // save two more hotel objects
         hotelService.saveHotel(hotel);
@@ -65,12 +69,14 @@ public class HotelServiceUnitTests {
         hotels.add(hotel);
         hotels.add(hotel);
 
-        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels());
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels().getHotels());
     }
 
     @Test
     public void testdeleteHotel() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        createAndSaveHotelWithID(hotelRepository);
+
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
     
         // save two more hotel objects
         hotelService.saveHotel(hotel);
@@ -83,18 +89,20 @@ public class HotelServiceUnitTests {
         hotels.add(hotel);
 
         // Before deleting information of one hotel
-        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels());
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels().getHotels());
 
         // Remove hotel from the hotels list and from the DB
         hotels.remove(0);
         hotelService.deleteHotel(HotelUnitTestHelper.TestHotelID);
 
         // After deleting information of one hotel
-        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels());
+        HotelUnitTestHelper.verifyGetHotelsLength(hotels, hotelService.getAllHotels().getHotels());
     }
 
     @Test
     public void testmodifyHotel() {
+        createAndSaveHotelWithID(hotelRepository);
+
         Hotel modifiedHotel = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
         String modifiedName = HotelUnitTestHelper.TestHotelName + " Modified";
         modifiedHotel.setName(modifiedName);
@@ -104,6 +112,18 @@ public class HotelServiceUnitTests {
         // Verify the hotel details
         Hotel hotelFromRepository = HotelUnitTestHelper.getHotelFromOptionalHotelObject(hotelRepository);
         HotelUnitTestHelper.verifyHotelDetails(hotelFromRepository, modifiedName);
+    }
+
+    // MARK: - Tests
+
+    private static void createAndSaveHotelWithID(HotelRepository hotelRepository) {
+        Hotel hotelWithID = HotelUnitTestHelper.createHotelObjectWithHotelID();
+        hotelRepository.save(hotelWithID);
+    }
+
+    private static void createAndSaveHotelWithoutID(HotelRepository hotelRepository) {
+        Hotel hotelWithoutID = HotelUnitTestHelper.createHotelObjectWithHotelID();
+        hotelRepository.save(hotelWithoutID);
     }
 
 }

@@ -4,6 +4,8 @@ import com.microservices.hotel.entities.Hotel;
 import com.microservices.hotel.helpers.HotelUnitTestHelper;
 import com.microservices.hotel.helpers.constants.HotelControllerTestAPIResponseConstants;
 import com.microservices.hotel.payloads.APIResponse;
+import com.microservices.hotel.payloads.APIResponseWithHotel;
+import com.microservices.hotel.payloads.APIResponseWithHotels;
 import com.microservices.hotel.services.HotelService;
 
 import org.junit.jupiter.api.AfterEach;
@@ -32,7 +34,7 @@ public class HotelControllerUnitTest extends AbstractTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
         hotelService.saveHotelWithID(hotel);
     }
 
@@ -44,7 +46,7 @@ public class HotelControllerUnitTest extends AbstractTest {
     // MARK: - Tests
 
     @Test
-    public void testGetHotelWithID() throws Exception {
+    public void testGetHotelByID() throws Exception {
         String getHotelWithIDURLString = "/hotel-service/hotel/{hotelID}";
 
         MvcResult mvcResult = mvc
@@ -56,9 +58,15 @@ public class HotelControllerUnitTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
-        String hotelFromURLResponse = mvcResult.getResponse().getContentAsString();
-        Hotel hotelResponse = super.mapFromJson(hotelFromURLResponse, Hotel.class);
-        HotelUnitTestHelper.verifyHotelDetails(hotelResponse);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponseWithHotel apiResponse = super.mapFromJson(response, APIResponseWithHotel.class);
+
+        // Verify API response details
+        HotelUnitTestHelper.verifyAPIResponse(
+            apiResponse.getApiResponse(), 
+            true, 
+            HttpStatus.OK, 
+            HotelControllerTestAPIResponseConstants.GET_HOTEL_SUCCESS);
     }
 
     @Test
@@ -72,16 +80,22 @@ public class HotelControllerUnitTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
-        String content = mvcResult.getResponse().getContentAsString();
-        Hotel[] hotelsList = super.mapFromJson(content, Hotel[].class);
-        Assertions.assertTrue(hotelsList.length > 0);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponseWithHotels apiResponse = super.mapFromJson(response, APIResponseWithHotels.class);
+
+        // Verify API response details
+        HotelUnitTestHelper.verifyAPIResponse(
+            apiResponse.getApiResponse(), 
+            true, 
+            HttpStatus.OK, 
+            HotelControllerTestAPIResponseConstants.GET_ALL_HOTEL_SUCCESS);
     }
 
     @Test
     public void testSaveHotel() throws Exception {
         String saveHotelURLString = "/hotel-service/hotel/new";
 
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
         String inputJson = super.mapToJson(hotel);
 
         MvcResult mvcResult = mvc
@@ -99,7 +113,7 @@ public class HotelControllerUnitTest extends AbstractTest {
     public void testModifyHotel() throws Exception {
         String modifyHotelURLString = "/hotel-service/hotel/modify";
 
-        Hotel modifiedHotel = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID);
+        Hotel modifiedHotel = hotelService.getHotelFromID(HotelUnitTestHelper.TestHotelID).getHotel();
         modifiedHotel.setName(HotelUnitTestHelper.TestHotelName + " Modified");
 
         String inputJson = super.mapToJson(modifiedHotel);
