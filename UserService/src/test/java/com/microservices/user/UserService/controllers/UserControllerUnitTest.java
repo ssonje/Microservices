@@ -17,6 +17,8 @@ import com.microservices.user.UserService.entities.User;
 import com.microservices.user.UserService.helpers.UserUnitTestHelper;
 import com.microservices.user.UserService.helpers.constants.UserControllerTestAPIResponseConstants;
 import com.microservices.user.UserService.payloads.APIResponse;
+import com.microservices.user.UserService.payloads.APIResponseWithUser;
+import com.microservices.user.UserService.payloads.APIResponseWithUsers;
 import com.microservices.user.UserService.services.UserService;
 
 @SpringBootTest
@@ -32,7 +34,7 @@ public class UserControllerUnitTest extends AbstractTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        User user = UserUnitTestHelper.createUserObject();
+        User user = UserUnitTestHelper.createUserObjectWithUserID();
         userService.saveUserByUserID(user);
     }
 
@@ -56,9 +58,15 @@ public class UserControllerUnitTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
-        String userFromURLResponse = mvcResult.getResponse().getContentAsString();
-        User userResponse = super.mapFromJson(userFromURLResponse, User.class);
-        UserUnitTestHelper.verifyUserDetails(userResponse);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponseWithUser apiResponse = super.mapFromJson(response, APIResponseWithUser.class);
+
+        // Verify API response details
+        UserUnitTestHelper.verifyAPIResponse(
+            apiResponse.getApiResponse(), 
+            true, 
+            HttpStatus.OK, 
+            UserControllerTestAPIResponseConstants.GET_USER_SUCCESS);
     }
 
     @Test
@@ -72,16 +80,22 @@ public class UserControllerUnitTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
-        String content = mvcResult.getResponse().getContentAsString();
-        User[] usersList = super.mapFromJson(content, User[].class);
-        Assertions.assertTrue(usersList.length > 0);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponseWithUsers apiResponse = super.mapFromJson(response, APIResponseWithUsers.class);
+
+        // Verify API response details
+        UserUnitTestHelper.verifyAPIResponse(
+            apiResponse.getApiResponse(), 
+            true, 
+            HttpStatus.OK, 
+            UserControllerTestAPIResponseConstants.GET_ALL_USERS_SUCCESS);
     }
 
     @Test
     public void testSaveUser() throws Exception {
         String saveUserURLString = "/user-service/user/new";
 
-        User user = UserUnitTestHelper.createUserObject();
+        User user = UserUnitTestHelper.createUserObjectWithUserID();
         String inputJson = super.mapToJson(user);
 
         MvcResult mvcResult = mvc
@@ -99,7 +113,7 @@ public class UserControllerUnitTest extends AbstractTest {
     public void testModifyUser() throws Exception {
         String modifyUserURLString = "/user-service/user/modify";
 
-        User modifiedUser = userService.getUserFromID(UserUnitTestHelper.TestUserID);
+        User modifiedUser = userService.getUserFromID(UserUnitTestHelper.TestUserID).getUser();
         modifiedUser.setName(UserUnitTestHelper.TestUserName + " Modified");
 
         String inputJson = super.mapToJson(modifiedUser);

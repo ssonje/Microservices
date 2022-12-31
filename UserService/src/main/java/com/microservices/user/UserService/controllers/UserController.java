@@ -6,6 +6,8 @@ import com.microservices.user.UserService.entities.User;
 import com.microservices.user.UserService.external.services.HotelService;
 import com.microservices.user.UserService.external.services.RatingService;
 import com.microservices.user.UserService.payloads.APIResponse;
+import com.microservices.user.UserService.payloads.APIResponseWithUser;
+import com.microservices.user.UserService.payloads.APIResponseWithUsers;
 import com.microservices.user.UserService.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,10 +44,10 @@ public class UserController {
 
     @GetMapping("/user/{userID}")
     public ResponseEntity<?> getUserByID(@PathVariable String userID) {
-        User user = userService.getUserFromID(userID);
+        APIResponseWithUser apiResponse = userService.getUserFromID(userID);
 
         // Call the Rating service to set the data for user
-        List<Rating> ratings = ratingService.getRatingsGivenByUserWithID(user.getId()).getRatings();
+        List<Rating> ratings = ratingService.getRatingsGivenByUserWithID(apiResponse.getUser().getId()).getRatings();
         List<Rating> ratingList = ratings.stream().map(rating -> {
             // Call the Hotel service to set the data for rating
             Hotel hotel = hotelService.getHotel(rating.getHotelID()).getHotel();
@@ -53,14 +55,14 @@ public class UserController {
             return rating;
         }).collect(Collectors.toList());
 
-        user.setRatings(ratingList);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        apiResponse.getUser().setRatings(ratingList);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.status(HttpStatus.OK).body(users);
+        APIResponseWithUsers apiResponse = userService.getAllUsers();
+        return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/user/delete/{userID}")
