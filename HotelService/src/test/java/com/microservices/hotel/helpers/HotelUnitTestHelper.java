@@ -31,7 +31,6 @@ public final class HotelUnitTestHelper {
 
     public static Hotel createHotelObjectWithoutHotelID() {
         Hotel hotel = Hotel.builder()
-            .id(TestHotelID)
             .name(TestHotelName)
             .about(TestHotelAbout)
             .location(TestHotelLocation)

@@ -14,9 +14,14 @@ public class Rating {
 
     @Id
     private String id;
+
+    @Column(nullable = false)
     private String userID;
+
     private String hotelID;
     private Integer rating;
+
+    @Column(length = 1000)
     private String feedback;
 
 }

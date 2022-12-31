@@ -20,9 +20,19 @@ public final class RatingUnitTestHelper {
     public static Integer TestRatingRating = 10;
     public static String TestRatingFeedback = "Very good Hotel";
 
-    public static Rating createRatingObject() {
+    public static Rating createRatingObjectWithRatingID() {
         Rating rating = Rating.builder()
             .id(TestRatingID)
+            .userID(TestUserID)
+            .hotelID(TestHotelID)
+            .rating(TestRatingRating)
+            .feedback(TestRatingFeedback)
+            .build();
+        return rating;
+    }
+
+    public static Rating createRatingObjectWithoutRatingID() {
+        Rating rating = Rating.builder()
             .userID(TestUserID)
             .hotelID(TestHotelID)
             .rating(TestRatingRating)
@@ -84,6 +94,16 @@ public final class RatingUnitTestHelper {
 
     public static void verifyRatingDetails(Rating rating, String feedback) {
         verifyRatingDetails(rating, TestHotelID, TestUserID, TestRatingRating, feedback);
+    }
+
+    public static void verifyRatingWithoutIDDetails(List<Rating> ratings) {
+        Rating requiredRating = ratings.get(0);
+        Assertions.assertEquals(ratings.toArray().length > 0, true);
+        Assertions.assertNotNull(requiredRating.getId());
+        Assertions.assertNotNull(requiredRating.getRating());
+        Assertions.assertNotNull(requiredRating.getFeedback());
+        Assertions.assertNotNull(requiredRating.getHotelID());
+        Assertions.assertNotNull(requiredRating.getUserID());
     }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -114,7 +115,7 @@ public class HotelServiceUnitTests {
         HotelUnitTestHelper.verifyHotelDetails(hotelFromRepository, modifiedName);
     }
 
-    // MARK: - Tests
+    // MARK: - Helper methods
 
     private static void createAndSaveHotelWithID(HotelRepository hotelRepository) {
         Hotel hotelWithID = HotelUnitTestHelper.createHotelObjectWithHotelID();
@@ -122,7 +123,8 @@ public class HotelServiceUnitTests {
     }
 
     private static void createAndSaveHotelWithoutID(HotelRepository hotelRepository) {
-        Hotel hotelWithoutID = HotelUnitTestHelper.createHotelObjectWithHotelID();
+        Hotel hotelWithoutID = HotelUnitTestHelper.createHotelObjectWithoutHotelID();
+        hotelWithoutID.setId(UUID.randomUUID().toString());
         hotelRepository.save(hotelWithoutID);
     }
 

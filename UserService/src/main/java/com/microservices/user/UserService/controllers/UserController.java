@@ -45,10 +45,10 @@ public class UserController {
         User user = userService.getUserFromID(userID);
 
         // Call the Rating service to set the data for user
-        List<Rating> ratings = ratingService.getRatingsGivenByUserWithID(user.getId());
+        List<Rating> ratings = ratingService.getRatingsGivenByUserWithID(user.getId()).getRatings();
         List<Rating> ratingList = ratings.stream().map(rating -> {
             // Call the Hotel service to set the data for rating
-            Hotel hotel = hotelService.getHotel(rating.getHotelID());
+            Hotel hotel = hotelService.getHotel(rating.getHotelID()).getHotel();
             rating.setHotel(hotel);
             return rating;
         }).collect(Collectors.toList());

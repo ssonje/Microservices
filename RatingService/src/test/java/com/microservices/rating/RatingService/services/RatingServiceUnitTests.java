@@ -1,7 +1,6 @@
 package com.microservices.rating.RatingService.services;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +13,7 @@ import com.microservices.rating.RatingService.repositories.RatingRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -27,12 +27,6 @@ public class RatingServiceUnitTests {
 
     // MARK: - Lifecycle methods
 
-    @BeforeEach
-    void setUp() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
-        ratingRepository.save(rating);
-    }
-
     @AfterEach
     void tearDown() {
         ratingRepository.deleteAll();
@@ -42,48 +36,60 @@ public class RatingServiceUnitTests {
 
     @Test
     public void testGetRatingsByUserID() {
-        List<Rating> ratingsFromService = ratingService.getRatingsFromUserID(RatingUnitTestHelper.TestUserID);
+        createAndSaveRatingWithID(ratingRepository);
+        List<Rating> ratingsFromService = ratingService.getRatingsFromUserID(RatingUnitTestHelper.TestUserID).getRatings();
         RatingUnitTestHelper.verifyRatingDetails(ratingsFromService);
     }
 
     @Test
-    public void testSaveRating() {
-        List<Rating> ratingsFromService = ratingService.getRatingsFromUserID(RatingUnitTestHelper.TestUserID);
+    public void testSaveRatingWithID() {
+        createAndSaveRatingWithID(ratingRepository);
+        List<Rating> ratingsFromService = ratingService.getRatingsFromUserID(RatingUnitTestHelper.TestUserID).getRatings();
         RatingUnitTestHelper.verifyRatingDetails(ratingsFromService);
+    }
+
+    @Test
+    public void testSaveRatingWithoutID() {
+        createAndSaveRatingWithoutID(ratingRepository);
+        List<Rating> ratings = ratingRepository.findAll();
+        RatingUnitTestHelper.verifyRatingWithoutIDDetails(ratings);
     }
 
     @Test
     public void testgetAllRatings() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        createAndSaveRatingWithID(ratingRepository);
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
     
         // Add rating to the ratings list
         List<Rating> ratings = new ArrayList<>();
         ratings.add(rating);
 
-        RatingUnitTestHelper.verifyGetRatingsLength(ratings, ratingService.getAllRatings());
+        RatingUnitTestHelper.verifyGetRatingsLength(ratings, ratingService.getAllRatings().getRatings());
     }
 
     @Test
     public void testdeleteRating() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        createAndSaveRatingWithID(ratingRepository);
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
     
         // Add rating to the ratings list
         List<Rating> ratings = new ArrayList<>();
         ratings.add(rating);
 
         // Before deleting information of one rating
-        RatingUnitTestHelper.verifyGetRatingsLength(ratings, ratingService.getAllRatings());
+        RatingUnitTestHelper.verifyGetRatingsLength(ratings, ratingService.getAllRatings().getRatings());
 
         // Remove rating from the ratings list and from the DB
         ratings.remove(0);
         ratingService.deleteRating(RatingUnitTestHelper.TestRatingID);
 
         // After deleting information of one rating
-        RatingUnitTestHelper.verifyGetRatingsLength(ratings, ratingService.getAllRatings());
+        RatingUnitTestHelper.verifyGetRatingsLength(ratings, ratingService.getAllRatings().getRatings());
     }
 
     @Test
     public void testmodifyRating() {
+        createAndSaveRatingWithID(ratingRepository);
         Rating modifiedRating = RatingUnitTestHelper.getRatingFromOptionalRatingObject(ratingRepository);
         String modifiedFeedback = RatingUnitTestHelper.TestRatingFeedback + " Modified";
         modifiedRating.setFeedback(modifiedFeedback);
@@ -93,6 +99,19 @@ public class RatingServiceUnitTests {
         // Verify the rating details
         Rating ratingFromRepository = RatingUnitTestHelper.getRatingFromOptionalRatingObject(ratingRepository);
         RatingUnitTestHelper.verifyRatingDetails(ratingFromRepository, modifiedFeedback);
+    }
+
+    // MARK: - Helper functions
+
+    private static void createAndSaveRatingWithID(RatingRepository ratingRepository) {
+        Rating ratingWithID = RatingUnitTestHelper.createRatingObjectWithRatingID();
+        ratingRepository.save(ratingWithID);
+    }
+
+    private static void createAndSaveRatingWithoutID(RatingRepository ratingRepository) {
+        Rating ratingWithoutID = RatingUnitTestHelper.createRatingObjectWithoutRatingID();
+        ratingWithoutID.setId(UUID.randomUUID().toString());
+        ratingRepository.save(ratingWithoutID);
     }
 
 }
