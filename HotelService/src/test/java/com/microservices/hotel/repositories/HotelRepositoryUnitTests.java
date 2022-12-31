@@ -25,7 +25,7 @@ public class HotelRepositoryUnitTests {
 
     @BeforeEach
     void setUp() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
         hotelRepository.save(hotel);
     }
 
@@ -44,7 +44,7 @@ public class HotelRepositoryUnitTests {
 
     @Test
     void testGetAllHotels() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
 
         // Add hotel to the hotels list
         List<Hotel> hotels = new ArrayList<>();
@@ -61,7 +61,7 @@ public class HotelRepositoryUnitTests {
 
     @Test
     void testDeleteHotel() {
-        Hotel hotel = HotelUnitTestHelper.createHotelObject();
+        Hotel hotel = HotelUnitTestHelper.createHotelObjectWithHotelID();
     
         // Add hotel to the hotels list
         List<Hotel> hotels = new ArrayList<>();
