@@ -2,13 +2,11 @@ package com.microservices.rating.RatingService.controllers;
 
 import com.microservices.rating.RatingService.entities.Rating;
 import com.microservices.rating.RatingService.payloads.APIResponse;
+import com.microservices.rating.RatingService.payloads.APIResponseWithRatings;
 import com.microservices.rating.RatingService.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/rating-service")
@@ -31,14 +29,14 @@ public class RatingController {
 
     @GetMapping("/ratings/user/{userID}")
     public ResponseEntity<?> getRatingsFromUserID(@PathVariable String userID) {
-        List<Rating> rating = ratingService.getRatingsFromUserID(userID);
-        return ResponseEntity.status(HttpStatus.OK).body(rating);
+        APIResponseWithRatings apiResponse = ratingService.getRatingsFromUserID(userID);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/ratings")
     public ResponseEntity<?> getAllRatings() {
-        List<Rating> ratings = ratingService.getAllRatings();
-        return ResponseEntity.status(HttpStatus.OK).body(ratings);
+        APIResponseWithRatings apiResponse = ratingService.getAllRatings();
+        return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/rating/delete/{ratingID}")

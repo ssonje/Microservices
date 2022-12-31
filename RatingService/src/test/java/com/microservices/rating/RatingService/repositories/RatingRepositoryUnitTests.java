@@ -25,7 +25,7 @@ public class RatingRepositoryUnitTests {
 
     @BeforeEach
     void setUp() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
         ratingRepository.save(rating);
     }
 
@@ -44,7 +44,7 @@ public class RatingRepositoryUnitTests {
 
     @Test
     void testGetAllRatings() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
 
         // Add rating to the ratings list
         List<Rating> ratings = new ArrayList<>();
@@ -61,7 +61,7 @@ public class RatingRepositoryUnitTests {
 
     @Test
     void testDeleteRating() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
     
         // Add rating to the ratings list
         List<Rating> ratings = new ArrayList<>();
@@ -80,7 +80,7 @@ public class RatingRepositoryUnitTests {
 
     @Test
     void testModifyRating() {
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
         ratingRepository.save(rating);
 
         Rating modifiedRating = RatingUnitTestHelper.getRatingFromOptionalRatingObject(ratingRepository);

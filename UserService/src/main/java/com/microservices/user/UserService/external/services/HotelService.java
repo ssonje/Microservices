@@ -1,6 +1,7 @@
 package com.microservices.user.UserService.external.services;
 
-import com.microservices.user.UserService.entities.Hotel;
+import com.microservices.user.UserService.payloads.APIResponseWithHotel;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface HotelService {
 
     @GetMapping("/hotel/{hotelID}")
-    Hotel getHotel(@PathVariable("hotelID") String hotelID);
+    APIResponseWithHotel getHotel(@PathVariable("hotelID") String hotelID);
 
 }

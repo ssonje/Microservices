@@ -1,6 +1,5 @@
 package com.microservices.rating.RatingService.controllers;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +19,7 @@ import com.microservices.rating.RatingService.entities.Rating;
 import com.microservices.rating.RatingService.helpers.RatingUnitTestHelper;
 import com.microservices.rating.RatingService.helpers.constants.RatingControllerTestAPIResponseConstants;
 import com.microservices.rating.RatingService.payloads.APIResponse;
+import com.microservices.rating.RatingService.payloads.APIResponseWithRatings;
 import com.microservices.rating.RatingService.services.RatingService;
 
 @SpringBootTest
@@ -35,7 +35,7 @@ public class RatingControllerUnitTest extends AbstractTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
         ratingService.saveRatingByRatingID(rating);
     }
 
@@ -59,9 +59,15 @@ public class RatingControllerUnitTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
-        String ratingsFromURLResponse = mvcResult.getResponse().getContentAsString();
-        Rating[] ratingsResponse = super.mapFromJson(ratingsFromURLResponse, Rating[].class);
-        RatingUnitTestHelper.verifyRatingDetails(Arrays.asList(ratingsResponse));
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponseWithRatings apiResponse = super.mapFromJson(response, APIResponseWithRatings.class);
+
+        // Verify API response details
+        RatingUnitTestHelper.verifyAPIResponse(
+            apiResponse.getApiResponse(), 
+            true, 
+            HttpStatus.OK, 
+            RatingControllerTestAPIResponseConstants.GET_ALL_RATINGS_FOR_USER_ID_SUCCESS);
     }
 
     @Test
@@ -75,16 +81,22 @@ public class RatingControllerUnitTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assertions.assertEquals(200, status);
 
-        String ratingsFromURLResponse = mvcResult.getResponse().getContentAsString();
-        Rating[] ratingsResponse = super.mapFromJson(ratingsFromURLResponse, Rating[].class);
-        Assertions.assertTrue(ratingsResponse.length > 0);
+        String response = mvcResult.getResponse().getContentAsString();
+        APIResponseWithRatings apiResponse = super.mapFromJson(response, APIResponseWithRatings.class);
+
+        // Verify API response details
+        RatingUnitTestHelper.verifyAPIResponse(
+            apiResponse.getApiResponse(), 
+            true, 
+            HttpStatus.OK, 
+            RatingControllerTestAPIResponseConstants.GET_ALL_RATINGS_SUCCESS);
     }
 
     @Test
     public void testSaveRating() throws Exception {
         String saveRatingURLString = "/rating-service/rating/new";
 
-        Rating rating = RatingUnitTestHelper.createRatingObject();
+        Rating rating = RatingUnitTestHelper.createRatingObjectWithRatingID();
         String inputJson = super.mapToJson(rating);
 
         MvcResult mvcResult = mvc
@@ -102,7 +114,7 @@ public class RatingControllerUnitTest extends AbstractTest {
     public void testModifyRating() throws Exception {
         String modifyRatingURLString = "/rating-service/rating/modify";
 
-        List<Rating> modifiedratings = ratingService.getRatingsFromUserID(RatingUnitTestHelper.TestUserID);
+        List<Rating> modifiedratings = ratingService.getRatingsFromUserID(RatingUnitTestHelper.TestUserID).getRatings();
         Rating modifiedRating = modifiedratings.get(0);
         modifiedRating.setFeedback(RatingUnitTestHelper.TestRatingFeedback + " Modified");
 
