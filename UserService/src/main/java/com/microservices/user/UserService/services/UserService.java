@@ -12,6 +12,7 @@ public interface UserService {
     User getUserFromID(String userID);
     APIResponse deleteUser(String userID);
     APIResponse modifyUser(User user);
-    APIResponse saveUserWithID(User user, String userID);
+    APIResponse deleteAllUsers();
+    APIResponse saveUserByUserID(User user);
 
 }

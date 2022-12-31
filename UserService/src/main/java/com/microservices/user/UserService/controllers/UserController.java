@@ -30,7 +30,13 @@ public class UserController {
 
     @PostMapping("/user/new")
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        APIResponse apiResponse = userService.saveUser(user);
+        APIResponse apiResponse;
+        if (user.getId() != null) {
+            apiResponse = userService.saveUserByUserID(user);
+        } else {
+            apiResponse = userService.saveUser(user);
+        }
+
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -57,13 +63,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
-    @PostMapping("/user/delete/{userID}")
+    @DeleteMapping("/user/delete/{userID}")
     public ResponseEntity<?> deleteUser(@PathVariable String userID) {
         APIResponse apiResponse = userService.deleteUser(userID);
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PostMapping("/user/modify")
+    @PutMapping("/user/modify")
     public ResponseEntity<?> modifyUser(@RequestBody User user) {
         APIResponse apiResponse = userService.modifyUser(user);
         return ResponseEntity.ok(apiResponse);

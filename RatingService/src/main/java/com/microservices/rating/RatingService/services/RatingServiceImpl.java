@@ -36,19 +36,6 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public APIResponse saveRatingByRatingID(Rating rating) {
-        try {
-            ratingRepository.save(rating);
-            return RatingServiceImpl.getAPIResponse(
-                RatingControllerAPIResponseConstants.ADD_RATING_SUCCESS,
-                HttpStatus.CREATED,
-                true);
-        } catch (Exception e) {
-            return RatingServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
-        }
-    }
-
-    @Override
     public List<Rating> getAllRatings() {
         return ratingRepository.findAll();
     }
@@ -79,6 +66,21 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public APIResponse modifyRating(Rating rating) {
+        try {
+            ratingRepository.save(rating);
+            return RatingServiceImpl.getAPIResponse(
+                RatingControllerAPIResponseConstants.MODIFIED_RATING_SUCCESS,
+                HttpStatus.OK,
+                true);
+        } catch (Exception e) {
+            return RatingServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);
+        }
+    }
+
+    // MARK: - Helper API's
+
+    @Override
     public APIResponse deleteAllRatings() {
         try {
             ratingRepository.deleteAll();
@@ -92,12 +94,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public APIResponse modifyRating(Rating rating) {
+    public APIResponse saveRatingByRatingID(Rating rating) {
         try {
             ratingRepository.save(rating);
             return RatingServiceImpl.getAPIResponse(
-                RatingControllerAPIResponseConstants.MODIFIED_RATING_SUCCESS,
-                HttpStatus.OK,
+                RatingControllerAPIResponseConstants.ADD_RATING_SUCCESS,
+                HttpStatus.CREATED,
                 true);
         } catch (Exception e) {
             return RatingServiceImpl.getAPIResponse(e.getMessage(), HttpStatus.NOT_FOUND, false);

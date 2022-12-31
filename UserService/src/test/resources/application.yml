@@ -1,0 +1,12 @@
+server:
+    port: 8086
+
+spring:
+  application:
+    name: USER-TESTS-SERVICE
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/usermicroservicestest
+
+  config:
+    import: configserver:http://localhost:8085
