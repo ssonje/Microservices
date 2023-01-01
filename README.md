@@ -28,3 +28,7 @@ Project Architecture -
 
 - Every Component used in each microservice has been unitly tested.
 - We're constantly upgrading the test cases in-order to make sure not a single edge/test case will miss out.
+
+# Microservices configuration server link -
+
+https://github.com/ssonje/Microservices-Configuration
