@@ -1,12 +1,8 @@
 package com.microservices.user.UserService.services;
 
 import com.microservices.user.UserService.constants.UserControllerAPIResponseConstants;
-import com.microservices.user.UserService.entities.Hotel;
-import com.microservices.user.UserService.entities.Rating;
 import com.microservices.user.UserService.entities.User;
 import com.microservices.user.UserService.exceptions.ResourceNotFoundException;
-import com.microservices.user.UserService.external.services.HotelService;
-import com.microservices.user.UserService.external.services.RatingService;
 import com.microservices.user.UserService.payloads.APIResponse;
 import com.microservices.user.UserService.payloads.APIResponseWithUser;
 import com.microservices.user.UserService.payloads.APIResponseWithUsers;
@@ -19,19 +15,12 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private HotelService hotelService;
-
-    @Autowired
-    private RatingService ratingService;
 
     // MARK: - API's
 
@@ -72,17 +61,6 @@ public class UserServiceImpl implements UserService {
         try {
             User user = userRepository.findById(userID).orElseThrow(() -> 
                 new ResourceNotFoundException("User with ID - " + userID + " not found..."));
-
-            // Call the Rating service to set the data for user
-            List<Rating> ratings = ratingService.getRatingsGivenByUserWithID(user.getId()).getRatings();
-            List<Rating> ratingList = ratings.stream().map(rating -> {
-                // Call the Hotel service to set the data for rating
-                Hotel hotel = hotelService.getHotel(rating.getHotelID()).getHotel();
-                rating.setHotel(hotel);
-                return rating;
-            }).collect(Collectors.toList());
-
-            user.setRatings(ratingList);
             return UserServiceImpl.getAPIResponseForUser(
                 user,
                 UserControllerAPIResponseConstants.GET_USER_SUCCESS,
