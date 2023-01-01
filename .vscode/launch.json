@@ -37,7 +37,7 @@
         },
         {
             "type": "java",
-            "name": "Spring Boot-ConfigServerApplication<ConfigServer>",
+            "name": "Launch ConfigServerApplication",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "mainClass": "com.microservices.config.server.ConfigServer.ConfigServerApplication",
