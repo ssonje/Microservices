@@ -1,6 +1,9 @@
 package com.microservices.user.UserService.controllers;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +20,11 @@ import com.microservices.user.UserService.payloads.APIResponseWithUser;
 import com.microservices.user.UserService.payloads.APIResponseWithUsers;
 import com.microservices.user.UserService.services.UserService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 @RequestMapping("/user-service")
+@CircuitBreaker(name = "userRatingUserHotelBreaker", fallbackMethod = "userRatingUserHotelBreaker")
 public class UserController {
 
     @Autowired
@@ -58,6 +64,21 @@ public class UserController {
     public ResponseEntity<?> modifyUser(@RequestBody User user) {
         APIResponse apiResponse = userService.modifyUser(user);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    // MARK: - Circuit breaker functions
+
+    public ResponseEntity<?> userRatingUserHotelBreaker(Exception e) {
+        APIResponse apiResponse = APIResponse.builder()
+            .httpStatus(HttpStatus.BAD_REQUEST)
+            .message(e.getMessage())
+            .responseStatus(false)
+            .build();
+        APIResponseWithUsers finalResponse = APIResponseWithUsers.builder()
+            .users(new ArrayList<>())
+            .apiResponse(apiResponse)
+            .build();
+        return ResponseEntity.ok(finalResponse);
     }
 
 }
