@@ -39,31 +39,31 @@ public class UserController {
             apiResponse = userService.saveUser(user);
         }
 
-        return ResponseEntity.ok(apiResponse);
+        return new ResponseEntity<>(apiResponse, apiResponse.getHttpStatus());
     }
 
     @GetMapping("/user/{userID}")
     public ResponseEntity<?> getUserByID(@PathVariable String userID) {
         APIResponseWithUser apiResponse = userService.getUserFromID(userID);
-        return ResponseEntity.ok(apiResponse);
+        return new ResponseEntity<>(apiResponse, apiResponse.getApiResponse().getHttpStatus());
     }
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         APIResponseWithUsers apiResponse = userService.getAllUsers();
-        return ResponseEntity.ok(apiResponse);
+        return new ResponseEntity<>(apiResponse, apiResponse.getApiResponse().getHttpStatus());
     }
 
     @DeleteMapping("/user/delete/{userID}")
     public ResponseEntity<?> deleteUser(@PathVariable String userID) {
         APIResponse apiResponse = userService.deleteUser(userID);
-        return ResponseEntity.ok(apiResponse);
+        return new ResponseEntity<>(apiResponse, apiResponse.getHttpStatus());
     }
 
     @PutMapping("/user/modify")
     public ResponseEntity<?> modifyUser(@RequestBody User user) {
         APIResponse apiResponse = userService.modifyUser(user);
-        return ResponseEntity.ok(apiResponse);
+        return new ResponseEntity<>(apiResponse, apiResponse.getHttpStatus());
     }
 
     // MARK: - Circuit breaker functions
@@ -78,7 +78,7 @@ public class UserController {
             .users(new ArrayList<>())
             .apiResponse(apiResponse)
             .build();
-        return ResponseEntity.ok(finalResponse);
+            return new ResponseEntity<>(finalResponse, finalResponse.getApiResponse().getHttpStatus());
     }
 
 }
